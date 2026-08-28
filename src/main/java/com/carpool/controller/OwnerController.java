@@ -46,6 +46,11 @@ public class OwnerController {
         return ApiResponse.of(ownerService.list());
     }
 
+    @GetMapping("/me")
+    public ApiResponse<?> current() {
+        return ApiResponse.of(ownerService.current());
+    }
+
     @GetMapping("/{ownerId}")
     public ApiResponse<?> get(@PathVariable UUID ownerId) {
         return ApiResponse.of(ownerService.get(ownerId));

@@ -44,9 +44,8 @@ public class OwnerService {
         if (principal.getRole() != Role.OWNER && principal.getRole() != Role.ADMIN) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Only owner/admin can create owner profile");
         }
-        if (ownerRepository.findByUserId(principal.getUserId()).isPresent()) {
-            throw new AppException(HttpStatus.CONFLICT, "DUPLICATE_OWNER", "Owner profile already exists");
-        }
+        var existing = ownerRepository.findByUserId(principal.getUserId());
+        if (existing.isPresent()) return ownerMapper.toResponse(existing.get());
 
         OwnerProfile owner = new OwnerProfile();
         owner.setUser(userRepository.findById(principal.getUserId()).orElseThrow());
@@ -75,6 +74,13 @@ public class OwnerService {
             kycDocumentRepository.save(doc);
         }
         return ownerMapper.toResponse(owner);
+    }
+
+    @Transactional(readOnly = true)
+    public OwnerResponse current() {
+        AppUserPrincipal principal = authFacade.currentUser();
+        return ownerMapper.toResponse(ownerRepository.findByUserId(principal.getUserId())
+            .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "OWNER_NOT_FOUND", "Owner profile not found")));
     }
 
     public List<OwnerResponse> list() {
