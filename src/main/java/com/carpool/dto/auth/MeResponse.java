@@ -19,4 +19,5 @@ public class MeResponse {
     private String profilePhotoUrl;
     private com.carpool.entity.VerificationStatus verificationStatus;
     private String diditSessionId;
+    private boolean mobileVerified;
 }

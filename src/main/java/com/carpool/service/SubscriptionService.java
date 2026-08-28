@@ -162,8 +162,6 @@ public class SubscriptionService {
         paymentProviderClient.refund(sub.getProviderPaymentId(), reason == null ? "n/a" : reason);
         sub.setStatus(SubscriptionStatus.REFUNDED);
         OwnerProfile owner = sub.getOwner();
-        owner.setVerified(false);
-        owner.setVerificationStatus(VerificationStatus.PENDING);
         ownerRepository.save(owner);
         subscriptionRepository.save(sub);
         auditService.log("SUBSCRIPTION_REFUND", authFacade.currentUser().getUserId().toString(), sub.getId().toString(), "{}");
@@ -199,8 +197,6 @@ public class SubscriptionService {
         sub.setStartsAt(approvedAt);
         sub.setExpiresAt(approvedAt.atZone(ZoneOffset.UTC).plusMonths(plan.getDurationMonths()).toInstant());
         sub.setRejectionComment(null);
-        sub.getOwner().setVerified(true);
-        sub.getOwner().setVerificationStatus(VerificationStatus.VERIFIED);
         ownerRepository.save(sub.getOwner());
         subscriptionRepository.save(sub);
         notificationService.create(sub.getOwner().getUser().getId(), NotificationType.SUBSCRIPTION_PAYMENT_SUCCESS,
@@ -223,8 +219,6 @@ public class SubscriptionService {
         sub.setStatus(SubscriptionStatus.REJECTED);
         sub.setReviewedAt(Instant.now());
         sub.setRejectionComment(comment.trim());
-        sub.getOwner().setVerified(false);
-        sub.getOwner().setVerificationStatus(VerificationStatus.PENDING);
         ownerRepository.save(sub.getOwner());
         subscriptionRepository.save(sub);
         notificationService.create(sub.getOwner().getUser().getId(), NotificationType.SUBSCRIPTION_PAYMENT_FAILURE,
@@ -241,8 +235,6 @@ public class SubscriptionService {
             .filter(s -> s.getStatus() == SubscriptionStatus.PAID && s.getExpiresAt() != null && !s.getExpiresAt().isAfter(now))
             .forEach(s -> {
                 s.setStatus(SubscriptionStatus.INACTIVE);
-                s.getOwner().setVerified(false);
-                s.getOwner().setVerificationStatus(VerificationStatus.PENDING);
                 ownerRepository.save(s.getOwner());
                 subscriptionRepository.save(s);
             });

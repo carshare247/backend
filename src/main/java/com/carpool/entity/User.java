@@ -80,7 +80,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private VerificationStatus verificationStatus = VerificationStatus.PENDING_VERIFICATION;
+    private VerificationStatus verificationStatus = VerificationStatus.NOT_STARTED;
 
     @Column(length = 120, unique = true)
     private String diditSessionId;

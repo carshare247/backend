@@ -19,4 +19,6 @@ public class TokenResponse {
     private String name;
     private Integer age;
     private String profilePhotoUrl;
+    private boolean mobileVerified;
+    private com.carpool.entity.VerificationStatus verificationStatus;
 }

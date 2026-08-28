@@ -26,6 +26,7 @@ import com.carpool.repository.RideSegmentRepository;
 import com.carpool.repository.RideStopRepository;
 import com.carpool.repository.SubscriptionRepository;
 import com.carpool.entity.SubscriptionStatus;
+import com.carpool.entity.VerificationStatus;
 import com.carpool.security.AppUserPrincipal;
 import com.carpool.security.AuthFacade;
 import lombok.RequiredArgsConstructor;
@@ -453,6 +454,7 @@ public class MultiStopRideService {
      */
     @Transactional(readOnly = true)
     public Map<String, Object> searchMultiStopRides(RideSearchRequest request) {
+        requireApprovedPassenger();
         log.debug("Searching multi-stop rides from {} to {} on {} for {} seats",
             request.getFromLocation(), request.getToLocation(), request.getDate(), request.getSeats());
 
@@ -525,6 +527,19 @@ public class MultiStopRideService {
                 .totalPages((results.size() + request.getSize() - 1) / request.getSize())
                 .build()
         );
+    }
+
+    private void requireApprovedPassenger() {
+        AppUserPrincipal principal = authFacade.currentUser();
+        if (principal.getRole() != Role.PASSENGER) {
+            throw new AppException(HttpStatus.FORBIDDEN, "PASSENGER_REQUIRED", "Passenger access is required");
+        }
+        userRepository.findById(principal.getUserId()).ifPresentOrElse(user -> {
+            VerificationStatus status = user.getVerificationStatus() == null
+                ? VerificationStatus.NOT_STARTED : user.getVerificationStatus().canonical();
+            if (status != VerificationStatus.APPROVED) throw new AppException(HttpStatus.FORBIDDEN,
+                "IDENTITY_VERIFICATION_REQUIRED", "Complete identity verification before searching rides");
+        }, () -> { throw new AppException(HttpStatus.UNAUTHORIZED, "USER_NOT_FOUND", "Authenticated user no longer exists"); });
     }
 
     /**

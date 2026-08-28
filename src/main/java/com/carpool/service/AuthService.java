@@ -90,6 +90,8 @@ public class AuthService {
         user.setName(request.getName() == null ? null : request.getName().trim());
         user.setGender(request.getGender());
         user.setFirebaseUid(request.getFirebaseUid());
+        user.setMobileVerified(false);
+        user.setVerificationStatus(com.carpool.entity.VerificationStatus.NOT_STARTED);
         user.setDateOfBirth(request.getDateOfBirth());
         user.setAge(calculateAge(request.getDateOfBirth()));
         if (request.getRole() == Role.PASSENGER) {
@@ -179,7 +181,8 @@ public class AuthService {
             .name(u == null ? null : u.getName())
             .age(u == null ? null : u.getAge())
                 .profilePhotoUrl(photo)
-            .verificationStatus(u == null ? null : u.getVerificationStatus())
+                .mobileVerified(u != null && u.isMobileVerified())
+                .verificationStatus(u == null ? null : u.getVerificationStatus() == null ? null : u.getVerificationStatus().canonical())
             .diditSessionId(u == null ? null : u.getDiditSessionId())
             .build();
     }
@@ -208,6 +211,8 @@ public class AuthService {
             .name(user.getName())
             .age(user.getAge())
             .profilePhotoUrl(user.getProfilePhotoUrl() != null && fileExists(user.getProfilePhotoUrl()) ? user.getProfilePhotoUrl() : null)
+            .mobileVerified(user.isMobileVerified())
+            .verificationStatus(user.getVerificationStatus() == null ? null : user.getVerificationStatus().canonical())
             .build();
     }
 

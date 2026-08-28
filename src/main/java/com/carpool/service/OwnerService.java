@@ -53,7 +53,7 @@ public class OwnerService {
         owner.setName(request.getName());
         owner.setMobile(mobileNormalizer.normalize(request.getMobile()));
         owner.setPreferences(request.getPreferences());
-        owner.setVerificationStatus(VerificationStatus.PENDING);
+        owner.setVerificationStatus(VerificationStatus.NOT_STARTED);
         if (request.getProfilePhoto() != null && !request.getProfilePhoto().isEmpty()) {
             owner.setProfilePhotoUrl(fileStorageService.storePublicProfile(request.getProfilePhoto()));
         }

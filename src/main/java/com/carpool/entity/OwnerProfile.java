@@ -43,7 +43,7 @@ public class OwnerProfile extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private VerificationStatus verificationStatus = VerificationStatus.PENDING;
+    private VerificationStatus verificationStatus = VerificationStatus.NOT_STARTED;
 
     @Column(length = 500)
     private String profilePhotoUrl;

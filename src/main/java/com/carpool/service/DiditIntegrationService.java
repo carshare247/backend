@@ -106,12 +106,12 @@ public class DiditIntegrationService {
             DiditSession session = sessionRepository.findBySessionId(sessionId).orElseGet(DiditSession::new);
             session.setSessionId(sessionId); session.setUserId(user.getId()); session.setUserRole(requestedRole); session.setWorkflowId(properties.getWorkflowId());
             sessionRepository.save(session);
-            user.setDiditSessionId(sessionId); user.setVerificationStatus(VerificationStatus.PENDING_VERIFICATION); userRepository.save(user);
+            user.setDiditSessionId(sessionId); user.setVerificationStatus(VerificationStatus.INITIATED); userRepository.save(user);
         } catch (RuntimeException ex) {
             log.error("Unable to persist Didit session {} for user {}", sessionId, user.getId(), ex);
             throw new AppException(HttpStatus.SERVICE_UNAVAILABLE, "DIDIT_SESSION_PERSIST_FAILED", "Unable to save identity verification session", ex);
         }
-        return DiditSessionResponse.builder().sessionId(sessionId).verificationUrl(url).userId(user.getId()).role(requestedRole.name()).status("PENDING_VERIFICATION").build();
+        return DiditSessionResponse.builder().sessionId(sessionId).verificationUrl(url).userId(user.getId()).role(requestedRole.name()).status("INITIATED").build();
     }
 
     public String syncCurrentStatus() {

@@ -16,6 +16,7 @@ import com.carpool.repository.RideRepository;
 import com.carpool.repository.RideSegmentRepository;
 import com.carpool.repository.SubscriptionRepository;
 import com.carpool.entity.SubscriptionStatus;
+import com.carpool.entity.VerificationStatus;
 import com.carpool.security.AppUserPrincipal;
 import com.carpool.security.AuthFacade;
 import lombok.RequiredArgsConstructor;
@@ -116,6 +117,7 @@ public class RideService {
     }
 
     public Map<String, Object> list(String from, String to, LocalDate date, Integer passengers, RideStatus status, int page, int size, String sort) {
+        requireApprovedPassenger();
         RideStatus effective = status == null ? RideStatus.ACTIVE : status;
         Page<Ride> rides = rideRepository.findByStatusAndDateGreaterThanEqual(effective, LocalDate.now(),
             PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort == null || sort.isBlank() ? "date" : sort)));
@@ -153,6 +155,17 @@ public class RideService {
             "items", filtered,
             "meta", PageMeta.builder().page(page).size(size).totalElements(rides.getTotalElements()).totalPages(rides.getTotalPages()).build()
         );
+    }
+
+    private void requireApprovedPassenger() {
+        AppUserPrincipal principal = authFacade.currentUser();
+        if (principal.getRole() != Role.PASSENGER) return;
+        userRepository.findById(principal.getUserId()).ifPresent(user -> {
+            VerificationStatus status = user.getVerificationStatus() == null
+                ? VerificationStatus.NOT_STARTED : user.getVerificationStatus().canonical();
+            if (status != VerificationStatus.APPROVED) throw new AppException(HttpStatus.FORBIDDEN,
+                "IDENTITY_VERIFICATION_REQUIRED", "Complete identity verification before searching rides");
+        });
     }
 
     public RideResponse get(UUID rideId) {

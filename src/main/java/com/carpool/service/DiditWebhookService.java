@@ -54,30 +54,49 @@ public class DiditWebhookService {
             if (sessionId == null || rawStatus == null) throw new AppException(HttpStatus.BAD_REQUEST, "INVALID_WEBHOOK", "session_id and status are required");
             DiditSession session = sessionRepository.findBySessionId(sessionId).orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "DIDIT_SESSION_NOT_FOUND", "Unknown Didit session"));
             VerificationStatus status = switch (rawStatus.toLowerCase()) {
-                case "approved", "verified" -> VerificationStatus.VERIFIED;
+                case "approved", "verified" -> VerificationStatus.APPROVED;
                 case "declined", "rejected" -> VerificationStatus.REJECTED;
-                default -> VerificationStatus.PENDING_VERIFICATION;
+                case "initiated", "created" -> VerificationStatus.INITIATED;
+                default -> VerificationStatus.UNDER_REVIEW;
             };
             var previous = auditRepository.findFirstBySessionId(sessionId);
             if (previous.isPresent() && previous.get().getStatus() == status) return;
             User user = userRepository.findById(session.getUserId()).orElseThrow();
-            user.setVerificationStatus(status); user.setKycVerified(status == VerificationStatus.VERIFIED); userRepository.save(user);
-            if (session.getUserRole() == Role.OWNER) ownerRepository.findByUserId(user.getId()).ifPresent(owner -> { owner.setVerificationStatus(status); owner.setVerified(status == VerificationStatus.VERIFIED); ownerRepository.save(owner); });
+            VerificationStatus previousStatus = user.getVerificationStatus() == null
+                ? VerificationStatus.NOT_STARTED : user.getVerificationStatus().canonical();
+            if (!isValidTransition(previousStatus, status)) {
+                throw new AppException(HttpStatus.CONFLICT, "INVALID_VERIFICATION_TRANSITION",
+                    "Invalid identity verification status transition");
+            }
+            user.setVerificationStatus(status); user.setKycVerified(status.isApproved()); userRepository.save(user);
+            if (session.getUserRole() == Role.OWNER) ownerRepository.findByUserId(user.getId()).ifPresent(owner -> { owner.setVerificationStatus(status); owner.setVerified(status.isApproved()); ownerRepository.save(owner); });
             DiditVerificationAudit audit = new DiditVerificationAudit();
             audit.setUserId(user.getId()); audit.setUserRole(session.getUserRole()); audit.setSessionId(sessionId); audit.setWorkflowId(session.getWorkflowId()); audit.setStatus(status); audit.setDecisionReason(text(root, "decision_reason", "reason")); audit.setRawPayloadJson(payload);
             auditRepository.save(audit);
             String route = session.getUserRole() == Role.OWNER ? "/owner/verification-status?role=OWNER" : "/passenger/verification-status?role=PASSENGER";
             String title = switch (status) {
-                case VERIFIED -> "Identity verification approved";
+                case APPROVED, VERIFIED -> "Identity verification approved";
                 case REJECTED -> "Identity verification declined";
                 default -> "Identity verification under review";
             };
             String message = switch (status) {
-                case VERIFIED -> "Your Didit identity verification was approved. You can continue with onboarding.";
+                case APPROVED, VERIFIED -> "Your Didit identity verification was approved. You can continue with onboarding.";
                 case REJECTED -> "Your Didit identity verification was declined. Open onboarding to verify again.";
                 default -> "Your Didit identity verification is under review. We will notify you when a decision is available.";
             };
             notificationService.create(user.getId(), NotificationType.KYC_VERIFICATION_RESULT, title, message, route);
+    }
+
+    private boolean isValidTransition(VerificationStatus previous, VerificationStatus next) {
+        if (previous == next) return true;
+        return switch (previous) {
+            case NOT_STARTED -> next == VerificationStatus.INITIATED;
+            case INITIATED -> next == VerificationStatus.UNDER_REVIEW || next == VerificationStatus.APPROVED || next == VerificationStatus.REJECTED;
+            case UNDER_REVIEW -> next == VerificationStatus.APPROVED || next == VerificationStatus.REJECTED;
+            case REJECTED -> next == VerificationStatus.INITIATED;
+            case APPROVED -> false;
+            default -> isValidTransition(previous.canonical(), next);
+        };
     }
 
     private void verifySignature(JsonNode root, String signatureV2, String signature, String signatureSimple, String timestamp, String payload) {
