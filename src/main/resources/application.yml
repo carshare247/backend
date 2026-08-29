@@ -3,7 +3,7 @@ spring:
     name: carpool-backend
 
   datasource:
-    url: jdbc:mysql://mysql.railway.internal:3306/railway
+    url: jdbc:mysql://mysql://railway.internal:3306/railway
     username: root
     password: YQYwGcEJePsFGJDrkDBYzkdvKfIcZKHp
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -55,7 +55,7 @@ app:
   # APP_CORS_ALLOWED-ORIGINS[0]=https://carshareuat.netlify.app
 
   file-storage:
-    local-root: ${FILE_STORAGE_ROOT:/app/storage}
+    local-root: ${FILE_STORAGE_ROOT:./storage}
     kyc-private-dir: kyc-private
     profile-public-dir: profile-public
 

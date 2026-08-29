@@ -36,7 +36,9 @@ public class LocalFileStorageService implements FileStorageService {
         if (file == null || file.isEmpty()) {
             throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "File is required");
         }
-        if (!ALLOWED_MIME.contains(file.getContentType())) {
+
+        String mime = file.getContentType();
+        if (mime == null || !ALLOWED_MIME.contains(mime)) {
             throw new AppException(HttpStatus.UNPROCESSABLE_ENTITY, "SEMANTIC_ERROR", "Unsupported file type");
         }
 
@@ -51,11 +53,12 @@ public class LocalFileStorageService implements FileStorageService {
             throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Invalid path");
         }
         try {
+            Files.createDirectories(base);
             Files.createDirectories(targetDir);
             file.transferTo(target);
             return dir + "/" + fileName;
         } catch (IOException e) {
-            throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_STORAGE_ERROR", "Could not store file");
+            throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_STORAGE_ERROR", "Could not store file: " + e.getMessage());
         }
     }
 }

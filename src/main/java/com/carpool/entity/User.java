@@ -72,6 +72,43 @@ public class User extends BaseEntity {
     @Column(length = 500)
     private String profilePhotoUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private RegistrationType registrationType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 40)
+    private RegistrationStage registrationStage = RegistrationStage.USER_TYPE_SELECTED;
+
+    @Column(length = 120)
+    private String mobileNumber;
+
+    @Column(length = 120)
+    private String fullName;
+
+    @Column(columnDefinition = "TIMESTAMP NULL")
+    private LocalDateTime diditLastCheckedAt;
+
+    @Column(length = 120)
+    private String diditVerificationId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private VerificationStatus diditStatus = VerificationStatus.NOT_STARTED;
+
+    @Column(length = 120)
+    private String subscriptionPlanId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private com.carpool.entity.SubscriptionStatus subscriptionStatus;
+
+    @Column(length = 120)
+    private String paymentUTR;
+
+    @Column(length = 500)
+    private String paymentScreenshotUrl;
+
     @Column(nullable = false)
     private boolean mobileVerified = false;
 
@@ -98,6 +135,19 @@ public class User extends BaseEntity {
 
     @Column(length = 255, unique = true)
     private String firebaseUid;
+
+    // Onboarding State Tracking
+    @Column(nullable = false)
+    private boolean registrationCompleted = false;
+
+    @Column(length = 50)
+    private String currentOnboardingStep;
+
+    @Column(nullable = false)
+    private boolean onboardingCompleted = false;
+
+    @Column(columnDefinition = "TIMESTAMP NULL")
+    private LocalDateTime lastOnboardingUpdate;
 
     @PrePersist
     void normalize() {

@@ -57,11 +57,6 @@ public class OwnerService {
             owner.setProfilePhotoUrl(fileStorageService.storePublicProfile(request.getProfilePhoto()));
         }
         owner = ownerRepository.save(owner);
-        // Notify owner to subscribe for a subscription to enable posting rides and receiving bookings
-        try {
-            notificationService.create(owner.getUser().getId(), com.carpool.entity.NotificationType.SUBSCRIPTION_PENDING,
-                "Subscription pending", "Complete subscription payment to start posting rides and receiving bookings.");
-        } catch (Exception ignored) {}
 
         if (request.getGovernmentIdProof() != null && !request.getGovernmentIdProof().isEmpty()) {
             KycDocument doc = new KycDocument();
