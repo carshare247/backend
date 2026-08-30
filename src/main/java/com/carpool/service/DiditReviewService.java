@@ -40,6 +40,7 @@ public class DiditReviewService {
     private final DiditReviewAuditLogRepository auditLogRepository;
     private final DiditWebhookEventRepository webhookEventRepository;
     private final UserRepository userRepository;
+    private final OwnerProfileRepository ownerProfileRepository;
     private final DiditIntegrationService diditIntegrationService;
     private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
@@ -171,6 +172,11 @@ public class DiditReviewService {
         User user = verification.getUser();
         user.setVerificationStatus(VerificationStatus.APPROVED);
         userRepository.save(user);
+        ownerProfileRepository.findByUserId(user.getId()).ifPresent(owner -> {
+            owner.setVerificationStatus(VerificationStatus.APPROVED);
+            owner.setVerified(true);
+            ownerProfileRepository.save(owner);
+        });
 
         // Send notification to user
         notifyUser(user, "verification_approved");
@@ -206,6 +212,11 @@ public class DiditReviewService {
         User user = verification.getUser();
         user.setVerificationStatus(VerificationStatus.REJECTED);
         userRepository.save(user);
+        ownerProfileRepository.findByUserId(user.getId()).ifPresent(owner -> {
+            owner.setVerificationStatus(VerificationStatus.REJECTED);
+            owner.setVerified(false);
+            ownerProfileRepository.save(owner);
+        });
 
         // Send notification to user
         notifyUser(user, "verification_rejected");

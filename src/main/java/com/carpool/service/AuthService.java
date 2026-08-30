@@ -94,11 +94,7 @@ public class AuthService {
         user.setVerificationStatus(com.carpool.entity.VerificationStatus.NOT_STARTED);
         user.setDateOfBirth(request.getDateOfBirth());
         user.setAge(calculateAge(request.getDateOfBirth()));
-        if (request.getRole() == Role.PASSENGER) {
-            // passenger must provide live profile photo
-            if (profilePhoto == null || profilePhoto.isEmpty()) {
-                throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Passenger profile photo is required");
-            }
+        if (request.getRole() == Role.PASSENGER && profilePhoto != null && !profilePhoto.isEmpty()) {
             String stored = fileStorageService.storePublicProfile(profilePhoto);
             user.setProfilePhotoUrl(stored);
         }

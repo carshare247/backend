@@ -5,6 +5,7 @@ import com.carpool.exception.AppException;
 import com.carpool.repository.UserRepository;
 import com.carpool.security.AuthFacade;
 import com.carpool.validation.MobileNormalizer;
+import com.carpool.repository.OwnerProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Objects;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -25,6 +27,8 @@ public class RegistrationService {
     private final UserRepository userRepository;
     private final AuthFacade authFacade;
     private final MobileNormalizer mobileNormalizer;
+    private final FileStorageService fileStorageService;
+    private final OwnerProfileRepository ownerProfileRepository;
 
     @Transactional
     public User upsertRegistrationProfile(com.carpool.dto.registration.RegistrationRequest request) {
@@ -105,21 +109,26 @@ public class RegistrationService {
         if (normalizedStatus == VerificationStatus.REJECTED) {
             user.setKycVerified(false);
         }
+        ownerProfileRepository.findByUserId(user.getId()).ifPresent(owner -> {
+            owner.setVerificationStatus(normalizedStatus.canonical());
+            owner.setVerified(normalizedStatus.isApproved());
+            ownerProfileRepository.save(owner);
+        });
         user.setUpdatedAt(java.time.Instant.now());
         return userRepository.save(user);
     }
 
     @Transactional
-    public User markProfilePhoto(String profilePhotoUrl) {
+    public User markProfilePhoto(MultipartFile profilePhoto) {
         UUID userId = authFacade.currentUser().getUserId();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "User not found"));
 
-        if (profilePhotoUrl == null || profilePhotoUrl.isBlank()) {
-            throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Profile photo URL is required");
+        if (profilePhoto == null || profilePhoto.isEmpty()) {
+            throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Profile photo is required");
         }
 
-        user.setProfilePhotoUrl(profilePhotoUrl);
+        user.setProfilePhotoUrl(fileStorageService.storePublicProfile(profilePhoto));
         if (user.getRegistrationType() == RegistrationType.PASSENGER) {
             user.setRegistrationStage(RegistrationStage.REGISTRATION_COMPLETED);
             user.setRegistrationCompleted(true);

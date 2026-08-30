@@ -20,12 +20,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OwnerService {
 
     private final OwnerProfileRepository ownerRepository;
@@ -45,18 +47,35 @@ public class OwnerService {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Only owner/admin can create owner profile");
         }
         var existing = ownerRepository.findByUserId(principal.getUserId());
-        if (existing.isPresent()) return ownerMapper.toResponse(existing.get());
+        if (existing.isPresent()) {
+            OwnerProfile owner = existing.get();
+            if (principal.getRole() == Role.OWNER && owner.getUser().getVerificationStatus() != null) {
+                VerificationStatus status = owner.getUser().getVerificationStatus().canonical();
+                owner.setVerificationStatus(status);
+                owner.setVerified(status.isApproved());
+                owner = ownerRepository.save(owner);
+            }
+            return ownerMapper.toResponse(owner);
+        }
 
+        var user = userRepository.findById(principal.getUserId()).orElseThrow();
         OwnerProfile owner = new OwnerProfile();
-        owner.setUser(userRepository.findById(principal.getUserId()).orElseThrow());
+        owner.setUser(user);
         owner.setName(request.getName());
         owner.setMobile(mobileNormalizer.normalize(request.getMobile()));
         owner.setPreferences(request.getPreferences());
-        owner.setVerificationStatus(VerificationStatus.NOT_STARTED);
-        if (request.getProfilePhoto() != null && !request.getProfilePhoto().isEmpty()) {
+        VerificationStatus verificationStatus = user.getVerificationStatus() == null
+            ? VerificationStatus.NOT_STARTED
+            : user.getVerificationStatus().canonical();
+        owner.setVerificationStatus(verificationStatus);
+        owner.setVerified(verificationStatus.isApproved());
+        if (user.getProfilePhotoUrl() != null && !user.getProfilePhotoUrl().isBlank()) {
+            owner.setProfilePhotoUrl(user.getProfilePhotoUrl());
+        } else if (request.getProfilePhoto() != null && !request.getProfilePhoto().isEmpty()) {
             owner.setProfilePhotoUrl(fileStorageService.storePublicProfile(request.getProfilePhoto()));
         }
-        owner = ownerRepository.save(owner);
+        log.info("Creating owner profile for user {} with mobile {} and profile photo {}", principal.getUserId(), owner.getMobile(), owner.getProfilePhotoUrl() != null);
+        owner = ownerRepository.saveAndFlush(owner);
 
         if (request.getGovernmentIdProof() != null && !request.getGovernmentIdProof().isEmpty()) {
             KycDocument doc = new KycDocument();

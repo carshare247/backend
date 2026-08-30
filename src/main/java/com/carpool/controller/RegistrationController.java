@@ -11,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 @Slf4j
 @RestController
@@ -29,16 +32,17 @@ public class RegistrationController {
         User user = userRepository.findById(authFacade.currentUser().getUserId())
             .orElseThrow(() -> new com.carpool.exception.AppException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "User not found"));
 
-        return ApiResponse.of(Map.of(
-            "userType", user.getRegistrationType() == null ? null : user.getRegistrationType().name(),
-            "stage", registrationService.currentStage(user).name(),
-            "registrationCompleted", user.isRegistrationCompleted(),
-            "mobileVerified", user.isMobileVerified(),
-            "diditStatus", user.getDiditStatus() == null ? null : user.getDiditStatus().name(),
-            "profilePhotoUrl", user.getProfilePhotoUrl(),
-            "subscriptionPlanId", user.getSubscriptionPlanId(),
-            "paymentUTR", user.getPaymentUTR()
-        ));
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("userType", user.getRegistrationType() == null ? null : user.getRegistrationType().name());
+        data.put("stage", registrationService.currentStage(user).name());
+        data.put("registrationCompleted", user.isRegistrationCompleted());
+        data.put("mobileVerified", user.isMobileVerified());
+        data.put("diditStatus", user.getDiditStatus() == null ? null : user.getDiditStatus().canonical().name());
+        data.put("profilePhotoUrl", user.getProfilePhotoUrl());
+        data.put("subscriptionPlanId", user.getSubscriptionPlanId());
+        data.put("paymentUTR", user.getPaymentUTR());
+        data.put("diditLastCheckedAt", user.getDiditLastCheckedAt());
+        return ApiResponse.of(data);
     }
 
     @PostMapping("/basic")
@@ -59,9 +63,9 @@ public class RegistrationController {
         return ApiResponse.of(Map.of("stage", user.getRegistrationStage().name(), "diditStatus", user.getDiditStatus().name()));
     }
 
-    @PostMapping("/profile-photo")
-    public ApiResponse<Map<String, Object>> markProfilePhoto(@RequestParam String profilePhotoUrl) {
-        User user = registrationService.markProfilePhoto(profilePhotoUrl);
+    @PostMapping(value = "/profile-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<Map<String, Object>> markProfilePhoto(@RequestPart("profilePhoto") MultipartFile profilePhoto) {
+        User user = registrationService.markProfilePhoto(profilePhoto);
         return ApiResponse.of(Map.of("stage", user.getRegistrationStage().name(), "profilePhotoUrl", user.getProfilePhotoUrl()));
     }
 

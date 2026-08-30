@@ -42,7 +42,7 @@ public class OwnerProfile extends BaseEntity {
     private boolean verified = false;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 30, columnDefinition = "varchar(30)")
     private VerificationStatus verificationStatus = VerificationStatus.NOT_STARTED;
 
     @Column(length = 500)

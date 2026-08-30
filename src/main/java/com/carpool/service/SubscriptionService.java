@@ -51,7 +51,17 @@ public class SubscriptionService {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Owner profile required");
         }
         OwnerProfile owner = ownerRepository.findById(principal.getOwnerId()).orElseThrow();
-        if (!owner.isVerified() || owner.getVerificationStatus() != VerificationStatus.VERIFIED) {
+        VerificationStatus userStatus = owner.getUser().getVerificationStatus();
+        if (userStatus != null && userStatus.canonical() != owner.getVerificationStatus()
+            || (userStatus != null && owner.isVerified() != userStatus.isApproved())) {
+            VerificationStatus canonicalStatus = userStatus == null
+                ? VerificationStatus.NOT_STARTED
+                : userStatus.canonical();
+            owner.setVerificationStatus(canonicalStatus);
+            owner.setVerified(canonicalStatus.isApproved());
+            owner = ownerRepository.save(owner);
+        }
+        if (!owner.isVerified() || !owner.getVerificationStatus().isApproved()) {
             throw new AppException(HttpStatus.FORBIDDEN, "IDENTITY_VERIFICATION_REQUIRED", "Complete Didit identity verification before starting a subscription");
         }
         if (request.getPlanId() == null || request.getPlanId().isBlank()) {
