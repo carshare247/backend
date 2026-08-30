@@ -52,11 +52,13 @@ public class SubscriptionService {
         }
         OwnerProfile owner = ownerRepository.findById(principal.getOwnerId()).orElseThrow();
         VerificationStatus userStatus = owner.getUser().getVerificationStatus();
-        if (userStatus != null && userStatus.canonical() != owner.getVerificationStatus()
-            || (userStatus != null && owner.isVerified() != userStatus.isApproved())) {
-            VerificationStatus canonicalStatus = userStatus == null
-                ? VerificationStatus.NOT_STARTED
-                : userStatus.canonical();
+        VerificationStatus ownerStatus = owner.getVerificationStatus();
+        VerificationStatus canonicalStatus = userStatus == null
+            ? VerificationStatus.NOT_STARTED
+            : userStatus.canonical();
+        if (ownerStatus == null
+            || canonicalStatus != ownerStatus.canonical()
+            || owner.isVerified() != canonicalStatus.isApproved()) {
             owner.setVerificationStatus(canonicalStatus);
             owner.setVerified(canonicalStatus.isApproved());
             owner = ownerRepository.save(owner);
@@ -67,7 +69,19 @@ public class SubscriptionService {
         if (request.getPlanId() == null || request.getPlanId().isBlank()) {
             throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "planId is required");
         }
-        var plan = planRepository.findById(java.util.UUID.fromString(request.getPlanId()))
+        if (request.getSuccessUrl() == null || request.getSuccessUrl().isBlank()) {
+            throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "successUrl is required");
+        }
+        if (request.getCancelUrl() == null || request.getCancelUrl().isBlank()) {
+            throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "cancelUrl is required");
+        }
+        UUID planId;
+        try {
+            planId = UUID.fromString(request.getPlanId());
+        } catch (IllegalArgumentException ex) {
+            throw new AppException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "planId must be a valid UUID");
+        }
+        var plan = planRepository.findById(planId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "PLAN_NOT_FOUND", "Subscription plan not found"));
 
         Subscription sub = new Subscription();
@@ -182,7 +196,7 @@ public class SubscriptionService {
         requireAdmin();
         expireDueSubscriptions();
         SubscriptionStatus filter = status == null || status.isBlank() ? null : SubscriptionStatus.valueOf(status.toUpperCase());
-        return subscriptionRepository.findAll().stream()
+        return subscriptionRepository.findAllWithOwnerAndPlan().stream()
             .filter(s -> filter == null || s.getStatus() == filter)
             .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
             .map(this::toResponse).toList();
@@ -241,7 +255,7 @@ public class SubscriptionService {
     @org.springframework.scheduling.annotation.Scheduled(fixedDelay = 3600000)
     public void expireDueSubscriptions() {
         Instant now = Instant.now();
-        subscriptionRepository.findAll().stream()
+        subscriptionRepository.findAllWithOwnerAndPlan().stream()
             .filter(s -> s.getStatus() == SubscriptionStatus.PAID && s.getExpiresAt() != null && !s.getExpiresAt().isAfter(now))
             .forEach(s -> {
                 s.setStatus(SubscriptionStatus.INACTIVE);

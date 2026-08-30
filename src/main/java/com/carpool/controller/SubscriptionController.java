@@ -4,6 +4,7 @@ import com.carpool.dto.ApiResponse;
 import com.carpool.dto.subscription.CreateCheckoutRequest;
 import com.carpool.dto.subscription.RefundRequest;
 import com.carpool.service.SubscriptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class SubscriptionController {
     private final com.carpool.repository.SubscriptionPlanRepository planRepository;
 
     @PostMapping("/create-checkout")
-    public ApiResponse<?> createCheckout(@RequestBody CreateCheckoutRequest request) {
+    public ApiResponse<?> createCheckout(@Valid @RequestBody CreateCheckoutRequest request) {
         return ApiResponse.of(subscriptionService.createCheckout(request));
     }
 

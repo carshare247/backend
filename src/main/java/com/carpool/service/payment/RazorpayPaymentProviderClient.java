@@ -20,6 +20,9 @@ public class RazorpayPaymentProviderClient implements PaymentProviderClient {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RazorpayPaymentProviderClient(AppProperties appProperties) {
+        if (appProperties == null) {
+            throw new IllegalArgumentException("AppProperties cannot be null");
+        }
         this.appProperties = appProperties;
     }
 
@@ -47,7 +50,13 @@ public class RazorpayPaymentProviderClient implements PaymentProviderClient {
     @Override
     public boolean validateWebhookSignature(String signature, String payload) {
         try {
+            if (appProperties == null || appProperties.getRazorpay() == null) {
+                return false;
+            }
             String webhookSecret = appProperties.getRazorpay().getWebhookSecret();
+            if (webhookSecret == null || webhookSecret.isBlank()) {
+                return false;
+            }
             Mac hmac = Mac.getInstance("HmacSHA256");
             hmac.init(new SecretKeySpec(webhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
             byte[] digest = hmac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
