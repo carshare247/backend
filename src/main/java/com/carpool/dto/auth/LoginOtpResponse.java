@@ -11,5 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginOtpResponse {
     private boolean exists;
+    private String registeredRole;
+    private boolean canLoginAsPassenger;
+    private boolean canLoginAsOwner;
     private String message;
 }

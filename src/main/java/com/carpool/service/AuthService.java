@@ -119,6 +119,11 @@ public class AuthService {
         String mobile = mobileNormalizer.normalize(request.getMobile());
         User user = userRepository.findByMobile(mobile)
             .orElseThrow(() -> new AppException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "Mobile number is not registered"));
+
+        if (request.getRole() == Role.OWNER && user.getRole() == Role.PASSENGER) {
+            throw new AppException(HttpStatus.FORBIDDEN, "OWNER_REGISTRATION_REQUIRED", "Owner login requires owner registration. Please register as owner first.");
+        }
+
         if (user.getRole() != request.getRole() && !(request.getRole() == Role.PASSENGER && user.getRole() == Role.OWNER)) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Role mismatch");
         }

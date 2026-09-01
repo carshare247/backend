@@ -57,11 +57,22 @@ public class OtpLoginService {
 
     public LoginOtpResponse checkMobile(LoginOtpRequest request) {
         String mobile = normalize(request.getMobileNumber());
-        boolean exists = userRepository.findByMobile(mobile).isPresent();
-        if (!exists) {
+        User user = userRepository.findByMobile(mobile).orElse(null);
+        if (user == null) {
             return LoginOtpResponse.builder().exists(false).message("Mobile number is not registered. Please create an account.").build();
         }
-        return LoginOtpResponse.builder().exists(true).message("Mobile number found").build();
+
+        Role registeredRole = user.getRole() == null ? Role.PASSENGER : user.getRole();
+        boolean canLoginAsPassenger = registeredRole == Role.PASSENGER || registeredRole == Role.OWNER;
+        boolean canLoginAsOwner = registeredRole == Role.OWNER;
+
+        return LoginOtpResponse.builder()
+                .exists(true)
+                .registeredRole(registeredRole.name())
+                .canLoginAsPassenger(canLoginAsPassenger)
+                .canLoginAsOwner(canLoginAsOwner)
+                .message("Mobile number found")
+                .build();
     }
 
     @Transactional
