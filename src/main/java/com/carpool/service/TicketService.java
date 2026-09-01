@@ -94,7 +94,9 @@ public class TicketService {
         t.setResolution(resolution);
         t.setStatus("RESOLVED");
         ticketRepository.save(t);
-        notificationService.create(t.getUser().getId(), com.carpool.entity.NotificationType.TICKET_RESOLVED, "Ticket resolved", "Your ticket #" + t.getId() + " is resolved.");
+        String message = "Your ticket #" + t.getId() + " is resolved.";
+        if (resolution != null && !resolution.isBlank()) message += " Admin response: " + resolution;
+        notificationService.create(t.getUser().getId(), com.carpool.entity.NotificationType.TICKET_RESOLVED, "Ticket resolved", message);
         return t;
     }
 }
