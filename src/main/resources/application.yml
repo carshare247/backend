@@ -86,6 +86,7 @@ app:
     workflow-id: ${DIDIT_WORKFLOW_ID:cf9bf608-e9dd-4906-8ebb-9ad61cd1face}
     webhook-secret: ${DIDIT_WEBHOOK_SECRET:hDRjx3lXTa9gRlx4VzCnuRdxZzniEqmjmNW_aqkOlHo}
     callback-base-url: ${DIDIT_CALLBACK_BASE_URL:https://carshareuat.netlify.app}
+    native-callback-base-url: ${DIDIT_NATIVE_CALLBACK_BASE_URL:carshare247://didit}
 
   # Web Push (VAPID) keys. Defaults below let push notifications work out-of-the-box
   # in local development without extra setup. Override VAPID_PUBLIC/VAPID_PRIVATE

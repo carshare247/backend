@@ -55,7 +55,7 @@ public class DiditIntegrationService {
             properties.getApiKey() != null && !properties.getApiKey().isBlank());
     }
 
-    public DiditSessionResponse createSession(Role requestedRole) {
+    public DiditSessionResponse createSession(Role requestedRole, boolean nativeApp) {
         var principal = authFacade.currentUser();
         User user = userRepository.findById(principal.getUserId()).orElseThrow(() ->
             new AppException(HttpStatus.UNAUTHORIZED, "USER_NOT_FOUND", "Authenticated user no longer exists"));
@@ -67,7 +67,10 @@ public class DiditIntegrationService {
         if (properties.getApiKey() == null || properties.getApiKey().isBlank() || properties.getWorkflowId() == null || properties.getWorkflowId().isBlank()) {
             throw new AppException(HttpStatus.SERVICE_UNAVAILABLE, "DIDIT_NOT_CONFIGURED", "Identity verification is not configured");
         }
-        String callback = properties.getCallbackBaseUrl() + (requestedRole == Role.OWNER ? "/owner/verification-status" : "/passenger/verification-status");
+        String callbackBaseUrl = nativeApp && properties.getNativeCallbackBaseUrl() != null && !properties.getNativeCallbackBaseUrl().isBlank()
+            ? properties.getNativeCallbackBaseUrl() : properties.getCallbackBaseUrl();
+        String callback = callbackBaseUrl + (requestedRole == Role.OWNER
+            ? "/owner/verification-status?role=OWNER" : "/passenger/verification-status?role=PASSENGER");
         JsonNode response;
         try {
             Map<String, Object> body = new HashMap<>();

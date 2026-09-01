@@ -11,4 +11,5 @@ public class DiditProperties {
     private String workflowId;
     private String webhookSecret;
     private String callbackBaseUrl;
+    private String nativeCallbackBaseUrl;
 }

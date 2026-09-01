@@ -17,8 +17,9 @@ public class DiditVerificationController {
     private final UserRepository userRepository;
 
     @PostMapping("/session")
-    public ApiResponse<?> createSession(@RequestParam Role role) {
-        return ApiResponse.of(integrationService.createSession(role));
+    public ApiResponse<?> createSession(@RequestParam Role role,
+                                        @RequestParam(defaultValue = "false") boolean nativeApp) {
+        return ApiResponse.of(integrationService.createSession(role, nativeApp));
     }
 
     @GetMapping("/status")
