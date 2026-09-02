@@ -37,6 +37,9 @@ public class Ticket extends BaseEntity {
     @Column(length = 40)
     private String status = "PENDING";
 
+    @Column(length = 20, nullable = false)
+    private String priority = "NORMAL";
+
     @Column(length = 1000)
     private String resolution;
 
@@ -52,6 +55,8 @@ public class Ticket extends BaseEntity {
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
     public String getResolution() { return resolution; }
     public void setResolution(String resolution) { this.resolution = resolution; }
 }

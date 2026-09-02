@@ -32,6 +32,10 @@ public class Notification extends BaseEntity {
     private User user;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "recipient_role", length = 20)
+    private Role recipientRole;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 40)
     private NotificationType type;
 

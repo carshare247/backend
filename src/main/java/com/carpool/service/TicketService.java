@@ -20,7 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -31,27 +33,43 @@ public class TicketService {
     private final AuthFacade authFacade;
     private final NotificationService notificationService;
     private final com.carpool.repository.UserRepository userRepository;
+    private final AuditService auditService;
 
     public List<TicketCategory> categories() {
         List<TicketCategory> categories = new java.util.ArrayList<>(categoryRepository.findAll());
-        if (categories.stream().noneMatch(category -> "DOCUMENT_VERIFICATION".equals(category.getCode()))) {
-            TicketCategory document = new TicketCategory();
-            document.setCode("DOCUMENT_VERIFICATION");
-            document.setLabel("Document verification");
-            document.setForRole("ALL");
-            categories.add(document);
-        }
+        addDefaultCategory(categories, "DOCUMENT_VERIFICATION", "Document verification", "ALL");
+        addDefaultCategory(categories, "SAFETY_INCIDENT", "Safety incident (urgent)", "ALL");
         return categories;
+    }
+
+    private void addDefaultCategory(List<TicketCategory> categories, String code, String label, String role) {
+        if (categories.stream().noneMatch(category -> code.equals(category.getCode()))) {
+            TicketCategory category = new TicketCategory();
+            category.setCode(code);
+            category.setLabel(label);
+            category.setForRole(role);
+            categories.add(category);
+        }
     }
 
     @Transactional
     public Ticket create(MultipartFile image, String category, String description) {
         java.util.UUID userId = authFacade.currentUser().getUserId();
         User u = userRepository.findById(userId).orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "User not found"));
+        String categoryCode = category == null ? "" : category.trim().toUpperCase(Locale.ROOT);
+        TicketCategory selectedCategory = categories().stream()
+                .filter(candidate -> categoryCode.equals(candidate.getCode()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(HttpStatus.BAD_REQUEST, "INVALID_CATEGORY", "Select a valid ticket category"));
+        if (!"ALL".equalsIgnoreCase(selectedCategory.getForRole())
+                && !u.getRole().name().equalsIgnoreCase(selectedCategory.getForRole())) {
+            throw new AppException(HttpStatus.FORBIDDEN, "CATEGORY_NOT_ALLOWED", "This ticket category is not available for your role");
+        }
         Ticket t = new Ticket();
         t.setUser(u);
-        t.setCategory(category);
+        t.setCategory(categoryCode);
         t.setDescription(description);
+        t.setPriority("SAFETY_INCIDENT".equals(categoryCode) ? "URGENT" : "NORMAL");
         if (image != null && !image.isEmpty()) {
             try {
                 Path dir = Path.of("storage/tickets"); Files.createDirectories(dir);
@@ -64,12 +82,16 @@ public class TicketService {
             }
         }
         Ticket saved = ticketRepository.save(t);
+        auditService.log("TICKET_CREATED", u.getId().toString(), saved.getId().toString(), "category=" + categoryCode + ", priority=" + saved.getPriority());
         // notify submitter
         notificationService.create(u.getId(), com.carpool.entity.NotificationType.TICKET_RAISED, "Ticket raised", "Ticket #" + saved.getId() + " created.");
         // notify admins
         try {
             userRepository.findAll().stream().filter(us -> us.getRole() == com.carpool.entity.Role.ADMIN).forEach(admin -> {
-                try { notificationService.create(admin.getId(), com.carpool.entity.NotificationType.TICKET_RAISED, "Ticket raised", "Ticket #" + saved.getId() + " created by " + u.getMobile()); } catch (Exception ignored) {}
+                try {
+                    String title = "URGENT".equals(saved.getPriority()) ? "Urgent safety incident" : "Ticket raised";
+                    notificationService.create(admin.getId(), com.carpool.entity.NotificationType.TICKET_RAISED, title, "Ticket #" + saved.getId() + " created by " + u.getMobile());
+                } catch (Exception ignored) {}
             });
         } catch (Exception ignored) {}
         return saved;
@@ -82,8 +104,11 @@ public class TicketService {
 
     public List<Ticket> adminList(String status) {
         if (authFacade.currentUser().getRole() != com.carpool.entity.Role.ADMIN) throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Admin only");
-        if (status == null || status.isBlank()) return ticketRepository.findAll();
-        return ticketRepository.findAll().stream().filter(t -> t.getStatus().equalsIgnoreCase(status)).toList();
+        return ticketRepository.findAll().stream()
+            .filter(ticket -> status == null || status.isBlank() || ticket.getStatus().equalsIgnoreCase(status))
+            .sorted(Comparator.comparing((Ticket ticket) -> !"URGENT".equals(ticket.getPriority()))
+                .thenComparing(Ticket::getCreatedAt, Comparator.reverseOrder()))
+            .toList();
     }
 
     public Ticket find(UUID id) { return ticketRepository.findById(id).orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "Ticket not found")); }
@@ -94,6 +119,7 @@ public class TicketService {
         t.setResolution(resolution);
         t.setStatus("RESOLVED");
         ticketRepository.save(t);
+        auditService.log("TICKET_RESOLVED", authFacade.currentUser().getUserId().toString(), t.getId().toString(), "priority=" + t.getPriority());
         String message = "Your ticket #" + t.getId() + " is resolved.";
         if (resolution != null && !resolution.isBlank()) message += " Admin response: " + resolution;
         notificationService.create(t.getUser().getId(), com.carpool.entity.NotificationType.TICKET_RESOLVED, "Ticket resolved", message);

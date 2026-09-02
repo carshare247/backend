@@ -172,7 +172,7 @@ public class PushNotificationService {
                     .setPriority(AndroidConfig.Priority.HIGH)
                     .setNotification(AndroidNotification.builder()
                         .setChannelId("carshare-default")
-                        .setIcon("carshare_icon")
+                        .setIcon("ic_stat_carshare")
                         .build())
                     .build())
                 .putData("title", request.getTitle() == null ? "" : request.getTitle())

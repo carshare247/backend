@@ -167,12 +167,7 @@ public class AuthService {
     public MeResponse me() {
         AppUserPrincipal user = authFacade.currentUser();
         com.carpool.entity.User u = userRepository.findById(user.getUserId()).orElse(null);
-        String photo = null;
-        if (u != null && u.getProfilePhotoUrl() != null) {
-            photo = fileExists(u.getProfilePhotoUrl()) ? u.getProfilePhotoUrl() : null;
-        } else if (user.getOwnerId() != null) {
-            photo = ownerProfileRepository.findById(user.getOwnerId()).map(o -> o.getProfilePhotoUrl()).filter(this::fileExists).orElse(null);
-        }
+        String photo = profilePhotoFor(u, user.getOwnerId());
         return MeResponse.builder()
             .userId(user.getUserId())
             .role(user.getRole())
@@ -211,7 +206,7 @@ public class AuthService {
             .gender(user.getGender())
             .name(user.getName())
             .age(user.getAge())
-            .profilePhotoUrl(user.getProfilePhotoUrl() != null && fileExists(user.getProfilePhotoUrl()) ? user.getProfilePhotoUrl() : null)
+            .profilePhotoUrl(profilePhotoFor(user, ownerId))
             .mobileVerified(user.isMobileVerified())
             .verificationStatus(user.getVerificationStatus() == null ? null : user.getVerificationStatus().canonical())
             .build();
@@ -221,13 +216,25 @@ public class AuthService {
         if (storedPath == null || storedPath.isBlank()) return false;
         try {
             java.nio.file.Path base = java.nio.file.Paths.get(appProperties.getFileStorage().getLocalRoot()).toAbsolutePath().normalize();
-            java.nio.file.Path target = base.resolve(storedPath).normalize();
+            String relativePath = storedPath.trim().replace('\\', '/').replaceFirst("^/?files/", "").replaceFirst("^/+", "");
+            java.nio.file.Path target = base.resolve(relativePath).normalize();
             if (!target.startsWith(base)) return false;
             return java.nio.file.Files.exists(target);
         } catch (Exception e) {
             log.warn("Error checking file existence for {}: {}", storedPath, e.getMessage());
             return false;
         }
+    }
+
+    private String profilePhotoFor(User user, UUID ownerId) {
+        if (user != null && fileExists(user.getProfilePhotoUrl())) {
+            return user.getProfilePhotoUrl();
+        }
+        if (ownerId == null) return null;
+        return ownerProfileRepository.findById(ownerId)
+            .map(owner -> owner.getProfilePhotoUrl())
+            .filter(this::fileExists)
+            .orElse(null);
     }
 
     private Integer calculateAge(LocalDate dateOfBirth) {

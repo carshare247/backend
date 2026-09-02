@@ -41,6 +41,7 @@ public class BookingService {
     private final AuditService auditService;
     private final MultiStopBookingService multiStopBookingService;
     private final PassengerLocationService passengerLocationService;
+    private final UserBlockService userBlockService;
 
     @Transactional
     public BookingResponse create(BookingCreateRequest request) {
@@ -65,6 +66,9 @@ public class BookingService {
         if (ride.getOwner().getMobile() != null && principal.getMobile() != null
             && ride.getOwner().getMobile().equals(principal.getMobile())) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Cannot book your own ride");
+        }
+        if (userBlockService.isBlockedBetween(principal.getUserId(), ride.getOwner().getUser().getId())) {
+            throw new AppException(HttpStatus.FORBIDDEN, "USER_BLOCKED", "Booking is unavailable between these users");
         }
         if (request.getSeats() > ride.getAvailableSeats()) {
             throw new AppException(HttpStatus.CONFLICT, "OVERBOOKING", "Insufficient seats");

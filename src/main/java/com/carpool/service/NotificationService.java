@@ -3,6 +3,7 @@ package com.carpool.service;
 import com.carpool.dto.notification.NotificationResponse;
 import com.carpool.entity.Notification;
 import com.carpool.entity.NotificationType;
+import com.carpool.entity.Role;
 import com.carpool.entity.User;
 import com.carpool.exception.AppException;
 import com.carpool.repository.NotificationRepository;
@@ -43,6 +44,7 @@ public class NotificationService {
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "User not found"));
         Notification notification = new Notification();
         notification.setUser(user);
+        notification.setRecipientRole(recipientRole(type));
         notification.setType(type);
         notification.setTitle(title);
         notification.setBody(body);
@@ -70,17 +72,17 @@ public class NotificationService {
         }
     }
 
-    public List<NotificationResponse> myNotifications() {
-        UUID userId = authFacade.currentUser().getUserId();
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream().map(this::toResponse).toList();
+    public List<NotificationResponse> myNotifications(Role role) {
+        UUID userId = requireCurrentRole(role);
+        return notificationRepository.findByUserIdAndRecipientRoleOrderByCreatedAtDesc(userId, role).stream().map(this::toResponse).toList();
     }
 
     @Transactional
-    public void markRead(UUID notificationId) {
-        UUID userId = authFacade.currentUser().getUserId();
+    public void markRead(UUID notificationId, Role role) {
+        UUID userId = requireCurrentRole(role);
         Notification n = notificationRepository.findById(notificationId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "Notification not found"));
-        if (!n.getUser().getId().equals(userId)) {
+        if (!n.getUser().getId().equals(userId) || n.getRecipientRole() != role) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Forbidden");
         }
         n.setRead(true);
@@ -88,11 +90,29 @@ public class NotificationService {
     }
 
     @Transactional
-    public void markAllRead() {
-        UUID userId = authFacade.currentUser().getUserId();
-        List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public void markAllRead(Role role) {
+        UUID userId = requireCurrentRole(role);
+        List<Notification> notifications = notificationRepository.findByUserIdAndRecipientRoleOrderByCreatedAtDesc(userId, role);
         notifications.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(notifications);
+    }
+
+    private UUID requireCurrentRole(Role role) {
+        var principal = authFacade.currentUser();
+        if (principal.getRole() != role) {
+            throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Role does not match the authenticated session");
+        }
+        return principal.getUserId();
+    }
+
+    private Role recipientRole(NotificationType type) {
+        return switch (type) {
+            case NEW_BOOKING_REQUEST, RATING_RECEIVED, RIDE_CREATED,
+                SUBSCRIPTION_PENDING, SUBSCRIPTION_PAYMENT_SUCCESS, SUBSCRIPTION_PAYMENT_FAILURE,
+                KYC_VERIFICATION_RESULT -> Role.OWNER;
+            case TICKET_RAISED, TICKET_RESOLVED -> Role.ADMIN;
+            default -> Role.PASSENGER;
+        };
     }
 
     private NotificationResponse toResponse(Notification n) {
