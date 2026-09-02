@@ -50,4 +50,8 @@ public class UserBlockService {
         return userBlockRepository.existsByBlockerIdAndBlockedId(firstUserId, secondUserId)
                 || userBlockRepository.existsByBlockerIdAndBlockedId(secondUserId, firstUserId);
     }
+
+    public boolean isBlockedByCurrentUser(UUID blockedUserId) {
+        return userBlockRepository.existsByBlockerIdAndBlockedId(authFacade.currentUser().getUserId(), blockedUserId);
+    }
 }
