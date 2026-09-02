@@ -97,7 +97,7 @@ public class BookingService {
 
     public List<BookingResponse> myBookings() {
         UUID userId = authFacade.currentUser().getUserId();
-        return bookingRepository.findByPassengerId(userId).stream().map(bookingMapper::toResponse).toList();
+        return bookingRepository.findByPassengerIdOrderByCreatedAtDesc(userId).stream().map(bookingMapper::toResponse).toList();
     }
 
     public BookingResponse get(UUID bookingId) {
