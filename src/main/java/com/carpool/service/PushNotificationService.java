@@ -58,9 +58,12 @@ public class PushNotificationService {
         String token = request.getToken().trim();
         String deviceType = Optional.ofNullable(request.getDeviceType()).map(String::trim).filter(v -> !v.isBlank()).orElse("web");
 
-        Optional<DeviceToken> existing = deviceTokenRepository.findFirstByUserIdAndFcmTokenOrderByUpdatedAtDesc(user.getId(), token);
+        Optional<DeviceToken> existing = deviceTokenRepository.findFirstByFcmTokenOrderByUpdatedAtDesc(token);
         if (existing.isPresent()) {
             DeviceToken deviceToken = existing.get();
+            if (!user.getId().equals(deviceToken.getUserId())) {
+                deviceToken.setUserId(user.getId());
+            }
             if (!deviceType.equals(deviceToken.getDeviceType())) {
                 deviceToken.setDeviceType(deviceType);
             }

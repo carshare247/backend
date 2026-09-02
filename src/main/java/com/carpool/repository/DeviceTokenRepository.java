@@ -18,6 +18,8 @@ public interface DeviceTokenRepository extends JpaRepository<DeviceToken, Long> 
     // and this avoids NonUniqueResultException during token registration.
     Optional<DeviceToken> findFirstByUserIdAndFcmTokenOrderByUpdatedAtDesc(UUID userId, String fcmToken);
 
+    Optional<DeviceToken> findFirstByFcmTokenOrderByUpdatedAtDesc(String fcmToken);
+
     List<DeviceToken> findByUserId(UUID userId);
 
     List<DeviceToken> findByUserIdAndDeviceType(UUID userId, String deviceType);
