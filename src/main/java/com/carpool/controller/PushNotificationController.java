@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 import java.util.UUID;
+import com.google.firebase.FirebaseApp;
 
 @RestController
 @RequestMapping("/api/push")
@@ -60,7 +61,8 @@ public class PushNotificationController {
         return ApiResponse.of(Map.of(
             "status", "ok",
             "message", "Push notification API is active",
-            "userId", authFacade.currentUser().getUserId().toString()
+            "userId", authFacade.currentUser().getUserId().toString(),
+            "fcmConfigured", !FirebaseApp.getApps().isEmpty()
         ));
     }
 }

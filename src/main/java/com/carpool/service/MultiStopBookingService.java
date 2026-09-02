@@ -102,6 +102,9 @@ public class MultiStopBookingService {
         if (ride.getStatus().name().equals("CANCELLED")) {
             throw new AppException(HttpStatus.CONFLICT, "RIDE_CANCELLED", "Ride is cancelled");
         }
+        if (ride.getOwner().getUser().getId().equals(principal.getUserId())) {
+            throw new AppException(HttpStatus.FORBIDDEN, "SELF_BOOKING", "You cannot book your own ride");
+        }
 
         // Find from and to stops
         List<RideStop> fromStops = rideStopRepository.findByRideIdAndLocationName(rideId, fromLocationName);

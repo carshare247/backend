@@ -455,6 +455,7 @@ public class MultiStopRideService {
     @Transactional(readOnly = true)
     public Map<String, Object> searchMultiStopRides(RideSearchRequest request) {
         requireApprovedPassenger();
+        UUID requesterId = authFacade.currentUser().getUserId();
         log.debug("Searching multi-stop rides from {} to {} on {} for {} seats",
             request.getFromLocation(), request.getToLocation(), request.getDate(), request.getSeats());
 
@@ -470,6 +471,9 @@ public class MultiStopRideService {
 
         for (Ride ride : rides.getContent()) {
             try {
+                if (ride.getOwner().getUser().getId().equals(requesterId)) {
+                    continue;
+                }
                 // Get matching stops
                 List<RideStop> matchingStops = rideStopRepository.findByRideIdAndLocationName(
                     ride.getId(), request.getFromLocation());
