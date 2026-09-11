@@ -140,6 +140,29 @@ public class DiditIntegrationService {
         }
     }
 
+    public void updateSessionStatus(String sessionId, String newStatus, String comment) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("new_status", newStatus);
+        if (comment != null && !comment.isBlank()) payload.put("comment", comment.trim());
+        try {
+            RestClient.builder().baseUrl(properties.getBaseUrl()).build().patch()
+                .uri("/v3/session/{sessionId}/update-status/", sessionId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("x-api-key", properties.getApiKey())
+                .body(payload)
+                .retrieve()
+                .toBodilessEntity();
+        } catch (RestClientResponseException ex) {
+            log.error("Didit status update rejected for session {}: status={}, body={}", sessionId,
+                ex.getStatusCode().value(), ex.getResponseBodyAsString());
+            throw new AppException(HttpStatus.BAD_GATEWAY, "DIDIT_STATUS_UPDATE_FAILED",
+                "Didit rejected the status update (HTTP " + ex.getStatusCode().value() + "): " + ex.getResponseBodyAsString(), ex);
+        } catch (RestClientException ex) {
+            throw new AppException(HttpStatus.BAD_GATEWAY, "DIDIT_UNAVAILABLE",
+                "Didit is temporarily unavailable", ex);
+        }
+    }
+
     private void addExpectedDetails(Map<String, Object> body, User user, String profilePhotoUrl) {
         Map<String, Object> expected = new HashMap<>();
         if (user.getName() != null && !user.getName().isBlank()) {

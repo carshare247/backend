@@ -152,6 +152,7 @@ public class DiditReviewService {
         DiditVerification verification = diditVerificationRepository.findById(request.getVerificationId())
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "VERIFICATION_NOT_FOUND",
                 "Didit verification not found"));
+        requirePendingDecision(verification);
 
         // Call Didit API to update status
         callDiditUpdateStatus(verification.getSessionId(), "Approved", request.getComment());
@@ -192,6 +193,7 @@ public class DiditReviewService {
         DiditVerification verification = diditVerificationRepository.findById(request.getVerificationId())
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "VERIFICATION_NOT_FOUND",
                 "Didit verification not found"));
+        requirePendingDecision(verification);
 
         // Call Didit API to update status
         callDiditUpdateStatus(verification.getSessionId(), "Declined", request.getReason());
@@ -366,15 +368,17 @@ public class DiditReviewService {
     // =======================
 
     private void callDiditUpdateStatus(String sessionId, String newStatus, String comment) {
-        try {
-            // This would call the actual Didit API to update the verification status
-            // The exact implementation depends on Didit's API documentation
-            log.debug("Calling Didit API to update status: session={}, status={}", sessionId, newStatus);
-            // TODO: Implement actual Didit API call
-        } catch (Exception e) {
-            log.error("Failed to call Didit API for session: {}", sessionId, e);
-            throw new AppException(HttpStatus.BAD_REQUEST, "DIDIT_API_ERROR",
-                "Failed to update Didit status: " + e.getMessage());
+        log.info("Updating Didit session status: session={}, status={}", sessionId, newStatus);
+        diditIntegrationService.updateSessionStatus(sessionId, newStatus, comment);
+    }
+
+    private void requirePendingDecision(DiditVerification verification) {
+        if (verification.getCurrentStatus() == DiditVerification.DiditReviewStatus.APPROVED
+            || verification.getCurrentStatus() == DiditVerification.DiditReviewStatus.DECLINED
+            || verification.getApprovalStatus() == DiditVerification.DiditApprovalStatus.APPROVED
+            || verification.getApprovalStatus() == DiditVerification.DiditApprovalStatus.DECLINED) {
+            throw new AppException(HttpStatus.CONFLICT, "ALREADY_DECIDED",
+                "This verification already has a final decision and cannot be changed");
         }
     }
 

@@ -10,7 +10,9 @@ import java.util.UUID;
 
 public interface DiditVerificationAuditRepository extends JpaRepository<DiditVerificationAudit, UUID> {
     Optional<DiditVerificationAudit> findFirstBySessionId(String sessionId);
+    Optional<DiditVerificationAudit> findFirstBySessionIdOrderByUpdatedAtDesc(String sessionId);
     List<DiditVerificationAudit> findAllByOrderByCreatedAtDesc();
+    List<DiditVerificationAudit> findAllByOrderByUpdatedAtDesc();
     List<DiditVerificationAudit> findByUserRoleOrderByCreatedAtDesc(Role role);
     List<DiditVerificationAudit> findByStatusOrderByCreatedAtDesc(VerificationStatus status);
     List<DiditVerificationAudit> findByUserRoleAndStatusOrderByCreatedAtDesc(Role role, VerificationStatus status);

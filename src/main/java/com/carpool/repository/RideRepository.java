@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.UUID;
 public interface RideRepository extends JpaRepository<Ride, UUID> {
     Page<Ride> findByStatusAndDateGreaterThanEqual(RideStatus status, LocalDate date, Pageable pageable);
     List<Ride> findByOwnerId(UUID ownerId);
+
+    @EntityGraph(attributePaths = "owner")
+    List<Ride> findAllByOrderByCreatedAtDesc();
 
         boolean existsByOwnerIdAndStatusNotIn(UUID ownerId, List<RideStatus> statuses);
 

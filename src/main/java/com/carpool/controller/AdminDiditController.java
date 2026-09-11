@@ -13,6 +13,7 @@ import com.carpool.repository.OwnerProfileRepository;
 import com.carpool.repository.UserRepository;
 import com.carpool.security.AuthFacade;
 import com.carpool.service.DiditReviewService;
+import com.carpool.service.DiditIntegrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class AdminDiditController {
     private final DiditVerificationRepository verificationRepository;
     private final OwnerProfileRepository ownerProfileRepository;
     private final DiditReviewService diditReviewService;
+    private final DiditIntegrationService diditIntegrationService;
 
     @PostMapping("/{sessionId}/approve")
     public ApiResponse<?> approve(@PathVariable String sessionId,
@@ -75,9 +77,14 @@ public class AdminDiditController {
     }
 
     private DiditVerificationAudit updateLegacyAudit(String sessionId, Map<String, String> body, boolean approved) {
-        DiditVerificationAudit audit = auditRepository.findFirstBySessionId(sessionId)
+        DiditVerificationAudit audit = auditRepository.findFirstBySessionIdOrderByUpdatedAtDesc(sessionId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "VERIFICATION_NOT_FOUND", "Didit verification not found"));
+        if (audit.getStatus() == VerificationStatus.APPROVED || audit.getStatus() == VerificationStatus.REJECTED) {
+            throw new AppException(HttpStatus.CONFLICT, "ALREADY_DECIDED",
+                "This verification already has a final decision and cannot be changed");
+        }
         String decisionComment = comment(body, approved ? "Approved by admin review." : "Rejected by admin review.");
+        diditIntegrationService.updateSessionStatus(sessionId, approved ? "Approved" : "Declined", decisionComment);
         VerificationStatus status = approved ? VerificationStatus.APPROVED : VerificationStatus.REJECTED;
         audit.setStatus(status);
         audit.setDecisionReason(decisionComment);
