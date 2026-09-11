@@ -44,6 +44,8 @@ public class RideStopDTO {
      */
     private BigDecimal longitude;
 
+    private Integer geofenceRadius;
+
     /**
      * Arrival time at this stop.
      * NULL for first stop (origin).

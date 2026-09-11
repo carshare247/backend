@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 /**
  * DTO for searching available rides with multi-stop support.
@@ -44,6 +45,11 @@ public class RideSearchRequest {
      */
     @NotBlank(message = "To location is required")
     private String toLocation;
+
+    private BigDecimal fromLatitude;
+    private BigDecimal fromLongitude;
+    private BigDecimal toLatitude;
+    private BigDecimal toLongitude;
 
     /**
      * Travel date.

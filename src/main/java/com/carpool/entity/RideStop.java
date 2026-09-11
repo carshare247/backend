@@ -71,6 +71,9 @@ public class RideStop extends BaseEntity {
     @Column(precision = 10, scale = 6)
     private java.math.BigDecimal longitude;
 
+    @Column(nullable = false)
+    private Integer geofenceRadius = 1000;
+
     /**
      * Expected arrival time at this stop.
      * NULL for the first stop (origin).

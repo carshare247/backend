@@ -47,6 +47,7 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/actuator/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/locations/**").permitAll()
                 // Allow public access to stored files (profile photos, public assets)
                 .requestMatchers("/files/**").permitAll()
                 .requestMatchers("/api/debug/**").permitAll()

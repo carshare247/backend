@@ -28,4 +28,31 @@ public class Location extends BaseEntity {
 
     @Column(nullable = false, length = 150)
     private String district;
+
+    @Column(length = 100)
+    private String osmId;
+
+    @Column(length = 500)
+    private String displayName;
+
+    @Column(precision = 10, scale = 8)
+    private java.math.BigDecimal latitude;
+
+    @Column(precision = 11, scale = 8)
+    private java.math.BigDecimal longitude;
+
+    @Column(columnDefinition = "text")
+    private String boundingBox;
+
+    @Column(length = 200)
+    private String city;
+
+    @Column(length = 200)
+    private String country;
+
+    @Column(length = 50)
+    private String locationType;
+
+    @Column(nullable = false)
+    private Integer geofenceRadius = 1000;
 }

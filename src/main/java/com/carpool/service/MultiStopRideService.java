@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 public class MultiStopRideService {
 
     private static final Logger log = LoggerFactory.getLogger(MultiStopRideService.class);
+    private static final double ROUTE_MATCH_RADIUS_METERS = 15_000d;
 
     private final RideRepository rideRepository;
     private final RideStopRepository rideStopRepository;
@@ -81,6 +82,7 @@ public class MultiStopRideService {
     private final NotificationService notificationService;
     private final SubscriptionRepository subscriptionRepository;
     private final com.carpool.repository.UserRepository userRepository;
+    private final GeoFenceService geoFenceService;
 
     // ========== SIMPLE RIDE CREATION (Legacy) ==========
 
@@ -244,6 +246,9 @@ public class MultiStopRideService {
             if (stop.getLocationName() == null || stop.getLocationName().isBlank()) {
                 throw new AppException(HttpStatus.UNPROCESSABLE_ENTITY, "INVALID_LOCATION", stopLabel + ": location name is required");
             }
+            if (stop.getLatitude() == null || stop.getLongitude() == null) {
+                throw new AppException(HttpStatus.UNPROCESSABLE_ENTITY, "INVALID_LOCATION", stopLabel + ": select a location from the geo suggestions");
+            }
 
             // First stop must have departure time
             if (i == 0) {
@@ -347,6 +352,7 @@ public class MultiStopRideService {
                 .locationName(stopDTO.getLocationName())
                 .latitude(stopDTO.getLatitude())
                 .longitude(stopDTO.getLongitude())
+                .geofenceRadius(stopDTO.getGeofenceRadius() == null ? 1000 : stopDTO.getGeofenceRadius())
                 .arrivalTime(stopDTO.getArrivalTime())
                 .departureTime(stopDTO.getDepartureTime())
                 .stopDurationMinutes(stopDurationMinutes)
@@ -462,12 +468,9 @@ public class MultiStopRideService {
         log.debug("Searching multi-stop rides from {} to {} on {} for {} seats",
             request.getFromLocation(), request.getToLocation(), request.getDate(), request.getSeats());
 
-        // Find rides with both stops
-        Page<Ride> rides = rideRepository.findRidesWithBothStops(
-            request.getFromLocation(),
-            request.getToLocation(),
+        Page<Ride> rides = rideRepository.findActiveMultiStopRides(
             request.getDate(),
-            PageRequest.of(request.getPage(), request.getSize(), Sort.by("date"))
+            PageRequest.of(0, Math.min(Math.max(request.getSize() * 10, 100), 1000), Sort.by("date"))
         );
 
         List<RideSearchResultDTO> results = new ArrayList<>();
@@ -480,18 +483,10 @@ public class MultiStopRideService {
                 if (ride.isFemaleOnly() && !"female".equalsIgnoreCase(requesterGender)) {
                     continue;
                 }
-                // Get matching stops
-                List<RideStop> matchingStops = rideStopRepository.findByRideIdAndLocationName(
-                    ride.getId(), request.getFromLocation());
-                if (matchingStops.isEmpty()) continue;
-
-                RideStop fromStop = matchingStops.get(0);
-
-                matchingStops = rideStopRepository.findByRideIdAndLocationName(
-                    ride.getId(), request.getToLocation());
-                if (matchingStops.isEmpty()) continue;
-
-                RideStop toStop = matchingStops.get(0);
+                List<RideStop> rideStops = rideStopRepository.findByRideIdOrderByStopOrder(ride.getId());
+                RideStop fromStop = findMatchingStop(rideStops, request.getFromLocation(), request.getFromLatitude(), request.getFromLongitude());
+                RideStop toStop = findMatchingStop(rideStops, request.getToLocation(), request.getToLatitude(), request.getToLongitude());
+                if (fromStop == null || toStop == null) continue;
 
                 // Validate stop order
                 if (fromStop.getStopOrder() >= toStop.getStopOrder()) {
@@ -537,6 +532,19 @@ public class MultiStopRideService {
                 .totalPages((results.size() + request.getSize() - 1) / request.getSize())
                 .build()
         );
+    }
+
+    private RideStop findMatchingStop(List<RideStop> stops, String name, BigDecimal latitude, BigDecimal longitude) {
+        if (latitude != null && longitude != null) {
+            return stops.stream()
+                .filter(stop -> stop.getLatitude() != null && stop.getLongitude() != null)
+                .filter(stop -> geoFenceService.distanceMeters(latitude, longitude, stop.getLatitude(), stop.getLongitude()) <= ROUTE_MATCH_RADIUS_METERS)
+                .min(Comparator.comparingDouble(stop -> geoFenceService.distanceMeters(latitude, longitude, stop.getLatitude(), stop.getLongitude())))
+                .orElse(null);
+        }
+        return stops.stream()
+            .filter(stop -> stop.getLocationName() != null && stop.getLocationName().trim().equalsIgnoreCase(name == null ? "" : name.trim()))
+            .findFirst().orElse(null);
     }
 
     private void requireApprovedPassenger() {
