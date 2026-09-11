@@ -48,6 +48,12 @@ public class Location extends BaseEntity {
     private String city;
 
     @Column(length = 200)
+    private String locality;
+
+    @Column(length = 200)
+    private String street;
+
+    @Column(length = 200)
     private String country;
 
     @Column(length = 50)

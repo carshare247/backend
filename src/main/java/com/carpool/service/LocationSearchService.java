@@ -19,9 +19,11 @@ public class LocationSearchService {
             .longitude(place.longitude())
             .boundingBox(place.boundingBox())
             .city(place.city())
+            .district(place.district())
+            .locality(place.locality())
+            .street(place.street())
             .state(place.state())
             .country(place.country())
-            .district(place.city() == null ? "" : place.city())
             .locationType(place.locationType())
             .geofenceRadius(place.geofenceRadius())
             .build()).toList();

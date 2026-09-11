@@ -15,8 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OpenStreetMapService {
     private final RestClient client = RestClient.builder()
-        .baseUrl("https://photon.komoot.io")
+        .baseUrl("https://nominatim.openstreetmap.org")
         .defaultHeader("User-Agent", "CarShare247/1.0 location-search")
+        .defaultHeader("Accept-Language", "en")
         .build();
     private final Map<String, CachedPlaces> cache = new ConcurrentHashMap<>();
     private static final long CACHE_TTL_MILLIS = 30L * 24 * 60 * 60 * 1000;
@@ -26,79 +27,54 @@ public class OpenStreetMapService {
         CachedPlaces cached = cache.get(cacheKey);
         if (cached != null && cached.expiresAt > System.currentTimeMillis()) return cached.places;
 
-        List<Place> places = searchPhoton(query, state);
+        List<Place> places = searchNominatim(query, state);
         cache.put(cacheKey, new CachedPlaces(places, System.currentTimeMillis() + CACHE_TTL_MILLIS));
         return places;
     }
 
-    private List<Place> searchPhoton(String query, String state) {
+    private List<Place> searchNominatim(String query, String state) {
         try {
             JsonNode response = client.get()
-                .uri(uri -> uri.path("/api/")
+                .uri(uri -> uri.path("/search")
                     .queryParam("q", query + (state == null || state.isBlank() ? ", India" : ", " + state + ", India"))
-                    .queryParam("limit", "10")
+                    .queryParam("format", "jsonv2")
+                    .queryParam("accept-language", "en")
+                    .queryParam("countrycodes", "in")
+                    .queryParam("addressdetails", "1")
+                    .queryParam("limit", "20")
                     .build())
                 .retrieve().body(JsonNode.class);
             List<Place> places = new ArrayList<>();
-            if (response != null && response.path("features").isArray()) {
-                for (JsonNode feature : response.path("features")) {
-                    JsonNode properties = feature.path("properties");
-                    if (!"india".equalsIgnoreCase(properties.path("country").asText())) continue;
-                    JsonNode coordinates = feature.path("geometry").path("coordinates");
-                    if (!coordinates.isArray() || coordinates.size() < 2) continue;
-                    String city = firstPhoton(properties, "city", "district", "county", "municipality");
-                    String providerState = properties.path("state").asText(null);
-                    String displayName = joinPlaceParts(
-                        properties.path("name").asText(query), city, providerState, "India");
+            if (response != null && response.isArray()) {
+                for (JsonNode item : response) {
+                    if (!"in".equalsIgnoreCase(item.path("address").path("country_code").asText())) continue;
+                    JsonNode address = item.path("address");
+                    String district = first(address, "state_district", "district", "county");
+                    String city = first(address, "city", "town", "municipality", "village");
+                    String locality = first(address, "suburb", "neighbourhood", "quarter", "locality");
+                    String street = first(address, "road", "pedestrian", "footway");
+                    String providerState = first(address, "state");
                     places.add(new Place(
-                        properties.path("osm_id").asText(null),
-                        displayName,
-                        new BigDecimal(coordinates.get(1).asText()),
-                        new BigDecimal(coordinates.get(0).asText()),
-                        "[]",
+                        item.path("osm_id").asText(null),
+                        item.path("display_name").asText(query + ", India"),
+                        new BigDecimal(item.path("lat").asText()),
+                        new BigDecimal(item.path("lon").asText()),
+                        item.path("boundingbox").toString(),
                         city,
+                        district,
+                        locality,
+                        street,
                         providerState,
                         "India",
-                        properties.path("type").asText("unknown").toUpperCase(),
+                        item.path("type").asText("unknown").toUpperCase(),
                         1000));
                 }
             }
             return places;
         } catch (Exception exception) {
-            log.warn("Photon fallback search failed for query {}", query, exception);
+            log.warn("Nominatim search failed for query {}", query, exception);
             return List.of();
         }
-    }
-
-    private Place toPlace(JsonNode item) {
-        JsonNode address = item.path("address");
-        String type = item.path("type").asText("unknown").toUpperCase();
-        return new Place(
-            item.path("osm_id").asText(null),
-            item.path("display_name").asText(),
-            new BigDecimal(item.path("lat").asText("0")),
-            new BigDecimal(item.path("lon").asText("0")),
-            item.path("boundingbox").toString(),
-            first(address, "city", "town", "municipality", "village"),
-            first(address, "state"),
-            first(address, "country"),
-            type,
-            radius(type));
-    }
-
-    private String firstPhoton(JsonNode node, String... names) {
-        for (String name : names) {
-            if (node.hasNonNull(name) && !node.get(name).asText().isBlank()) return node.get(name).asText();
-        }
-        return null;
-    }
-
-    private String joinPlaceParts(String... parts) {
-        return java.util.Arrays.stream(parts)
-            .filter(part -> part != null && !part.isBlank())
-            .distinct()
-            .reduce((first, second) -> first + ", " + second)
-            .orElse("");
     }
 
     private String first(JsonNode node, String... names) {
@@ -106,16 +82,10 @@ public class OpenStreetMapService {
         return null;
     }
 
-    private int radius(String type) {
-        if (type.contains("street") || type.contains("road")) return 200;
-        if (type.contains("city") || type.contains("town")) return 5000;
-        if (type.contains("suburb") || type.contains("neighbourhood")) return 1000;
-        return 500;
-    }
-
     private record CachedPlaces(List<Place> places, long expiresAt) {}
 
     public record Place(String osmId, String displayName, BigDecimal latitude, BigDecimal longitude,
-                        String boundingBox, String city, String state, String country,
+                        String boundingBox, String city, String district, String locality, String street,
+                        String state, String country,
                         String locationType, int geofenceRadius) {}
 }

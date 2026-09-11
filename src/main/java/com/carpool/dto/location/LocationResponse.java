@@ -17,6 +17,8 @@ public class LocationResponse {
     private java.math.BigDecimal longitude;
     private String boundingBox;
     private String city;
+    private String locality;
+    private String street;
     private String country;
     private String locationType;
     private Integer geofenceRadius;
