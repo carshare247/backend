@@ -15,6 +15,7 @@ import com.carpool.repository.KycDocumentRepository;
 import com.carpool.repository.OwnerProfileRepository;
 import com.carpool.repository.SubscriptionRepository;
 import com.carpool.repository.SubscriptionPlanRepository;
+import com.carpool.repository.RewardSettingsRepository;
 import com.carpool.security.AuthFacade;
 import com.carpool.service.payment.PaymentCheckout;
 import com.carpool.service.payment.PaymentProviderClient;
@@ -42,6 +43,8 @@ public class SubscriptionService {
     private final AuthFacade authFacade;
     private final NotificationService notificationService;
     private final AuditService auditService;
+    private final WalletService walletService;
+    private final RewardSettingsRepository rewardSettingsRepository;
 
     @Transactional
     public CheckoutResponse createCheckout(CreateCheckoutRequest request) {
@@ -84,26 +87,42 @@ public class SubscriptionService {
         var plan = planRepository.findById(planId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "PLAN_NOT_FOUND", "Subscription plan not found"));
 
+        var wallet = walletService.getWallet(owner.getUser().getId());
+        int usagePercentage = rewardSettingsRepository.findById((short) 1)
+            .orElseGet(() -> rewardSettingsRepository.save(new com.carpool.entity.RewardSettings()))
+            .getSubscriptionCoinPercentage();
+        long maximumAllowedCoins = ((long) plan.getAmountPaise() * usagePercentage / 100) / 100;
+        long coinsApplied = request.isUseCoins() ? Math.min(wallet.getAvailableCoins(), maximumAllowedCoins) : 0;
+        int payableAmount = Math.toIntExact(plan.getAmountPaise() - coinsApplied * 100);
+
         Subscription sub = new Subscription();
         sub.setOwner(owner);
         sub.setPlan(plan);
-        sub.setAmount(plan.getAmountPaise());
+        sub.setGrossAmount(plan.getAmountPaise());
+        sub.setCoinsApplied(coinsApplied);
+        sub.setAmount(payableAmount);
         sub.setCurrency(plan.getCurrency());
         sub.setStatus(SubscriptionStatus.CREATED);
         sub.setProvider(PaymentProvider.valueOf(paymentProviderClient.providerName()));
         sub = subscriptionRepository.save(sub);
+        if (coinsApplied > 0) walletService.reserveForSubscription(owner.getUser().getId(), coinsApplied);
         sub.setStatus(SubscriptionStatus.PENDING);
         subscriptionRepository.save(sub);
         notificationService.create(owner.getUser().getId(), NotificationType.SUBSCRIPTION_PENDING,
             "Subscription request received", "Your subscription request is awaiting payment confirmation and admin review.");
 
-        var checkout = paymentProviderClient.createCheckout(sub.getId().toString(), plan.getAmountPaise(), plan.getCurrency(), request.getSuccessUrl(), request.getCancelUrl(), owner.getId().toString());
+        var checkout = paymentProviderClient.createCheckout(sub.getId().toString(), payableAmount, plan.getCurrency(), request.getSuccessUrl(), request.getCancelUrl(), owner.getId().toString());
         sub.setProviderPaymentId(checkout.orderId());
         subscriptionRepository.save(sub);
 
         return CheckoutResponse.builder()
             .subscriptionId(sub.getId())
-            .amount(plan.getAmountPaise())
+            .amount(payableAmount)
+            .grossAmount(plan.getAmountPaise())
+            .availableCoins(wallet.getAvailableCoins())
+            .maximumAllowedCoins(maximumAllowedCoins)
+            .coinsApplied(coinsApplied)
+            .subscriptionCoinPercentage(usagePercentage)
             .currency(plan.getCurrency())
             .provider(paymentProviderClient.providerName())
             .checkoutUrl(checkout.checkoutUrl())
@@ -126,6 +145,7 @@ public class SubscriptionService {
         }
 
         if ("PAID".equalsIgnoreCase(event.status()) || "SUCCESS".equalsIgnoreCase(event.status())) {
+            applyCoinDeduction(sub);
             sub.setStatus(SubscriptionStatus.PAID);
             sub.setProviderPaymentId(event.paymentId());
             sub.setStartsAt(Instant.now());
@@ -137,6 +157,7 @@ public class SubscriptionService {
             notificationService.create(sub.getOwner().getUser().getId(), NotificationType.SUBSCRIPTION_PAYMENT_SUCCESS,
                 "Subscription active", "Your subscription payment was successful.");
         } else {
+            releaseCoinReservation(sub);
             sub.setStatus(SubscriptionStatus.FAILED);
             notificationService.create(sub.getOwner().getUser().getId(), NotificationType.SUBSCRIPTION_PAYMENT_FAILURE,
                 "Subscription failed", "Your subscription payment failed.");
@@ -184,6 +205,10 @@ public class SubscriptionService {
             throw new AppException(HttpStatus.CONFLICT, "CONFLICT", "Only paid subscriptions can be refunded");
         }
         paymentProviderClient.refund(sub.getProviderPaymentId(), reason == null ? "n/a" : reason);
+        if (sub.getCoinsApplied() > 0 && sub.isWalletDeductionApplied()) {
+            walletService.credit(sub.getOwner().getUser().getId(), sub.getCoinsApplied(), "REFUND", "SUBSCRIPTION", sub.getId(),
+                "subscription-refund:" + sub.getId(), "Subscription coin refund");
+        }
         sub.setStatus(SubscriptionStatus.REFUNDED);
         OwnerProfile owner = sub.getOwner();
         ownerRepository.save(owner);
@@ -216,6 +241,7 @@ public class SubscriptionService {
                 .orElseThrow(() -> new AppException(HttpStatus.SERVICE_UNAVAILABLE, "PLAN_UNAVAILABLE", "Subscription plan unavailable"));
         }
         Instant approvedAt = Instant.now();
+        applyCoinDeduction(sub);
         sub.setStatus(SubscriptionStatus.PAID);
         sub.setReviewedAt(approvedAt);
         sub.setStartsAt(approvedAt);
@@ -241,6 +267,7 @@ public class SubscriptionService {
             throw new AppException(HttpStatus.CONFLICT, "INVALID_TRANSITION", "Only submitted payments can be rejected");
         }
         sub.setStatus(SubscriptionStatus.REJECTED);
+        releaseCoinReservation(sub);
         sub.setReviewedAt(Instant.now());
         sub.setRejectionComment(comment.trim());
         ownerRepository.save(sub.getOwner());
@@ -267,6 +294,21 @@ public class SubscriptionService {
     private void requireAdmin() {
         if (authFacade.currentUser().getRole() != Role.ADMIN) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Admin access required");
+        }
+    }
+
+    private void applyCoinDeduction(Subscription subscription) {
+        if (subscription.isWalletDeductionApplied() || subscription.getCoinsApplied() <= 0) return;
+        walletService.settleSubscription(subscription.getOwner().getUser().getId(), subscription.getCoinsApplied(), subscription.getId());
+        subscription.setWalletDeductionApplied(true);
+        notificationService.create(subscription.getOwner().getUser().getId(), NotificationType.SUBSCRIPTION_COINS_USED,
+            "Coins applied", "Coins have been successfully used towards subscription renewal.", "/owner/dashboard");
+    }
+
+    private void releaseCoinReservation(Subscription subscription) {
+        if (!subscription.isWalletDeductionApplied() && subscription.getCoinsApplied() > 0) {
+            walletService.releaseSubscription(subscription.getOwner().getUser().getId(), subscription.getCoinsApplied());
+            subscription.setCoinsApplied(0);
         }
     }
 

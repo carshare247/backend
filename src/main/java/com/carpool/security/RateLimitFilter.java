@@ -21,6 +21,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final Map<String, Bucket> authBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> uploadBuckets = new ConcurrentHashMap<>();
+    private final Map<String, Bucket> rewardBuckets = new ConcurrentHashMap<>();
     private final int authLimit;
     private final int uploadLimit;
 
@@ -46,6 +47,11 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/owners") && "multipart/form-data".equalsIgnoreCase(request.getContentType() == null ? "" : request.getContentType().split(";")[0])
             && !consume(uploadBuckets, key, uploadLimit)) {
             response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Upload rate limit exceeded");
+            return;
+        }
+        if ((path.startsWith("/api/rewards") || path.startsWith("/api/admin/rewards"))
+            && !consume(rewardBuckets, key, 30)) {
+            response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rewards rate limit exceeded");
             return;
         }
 

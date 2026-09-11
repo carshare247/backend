@@ -456,6 +456,9 @@ public class MultiStopRideService {
     public Map<String, Object> searchMultiStopRides(RideSearchRequest request) {
         requireApprovedPassenger();
         UUID requesterId = authFacade.currentUser().getUserId();
+        String requesterGender = userRepository.findById(requesterId)
+            .map(user -> user.getGender())
+            .orElse(null);
         log.debug("Searching multi-stop rides from {} to {} on {} for {} seats",
             request.getFromLocation(), request.getToLocation(), request.getDate(), request.getSeats());
 
@@ -472,6 +475,9 @@ public class MultiStopRideService {
         for (Ride ride : rides.getContent()) {
             try {
                 if (ride.getOwner().getUser().getId().equals(requesterId)) {
+                    continue;
+                }
+                if (ride.isFemaleOnly() && !"female".equalsIgnoreCase(requesterGender)) {
                     continue;
                 }
                 // Get matching stops

@@ -50,6 +50,7 @@ public class AuthService {
     private final com.carpool.config.AppProperties appProperties;
     private final PasswordEncoder passwordEncoder;
     private final KycDocumentRepository kycDocumentRepository;
+    private final ReferralService referralService;
 
     @Transactional
     public TokenResponse register(AuthRequest request, String ipAddress, String userAgent, org.springframework.web.multipart.MultipartFile profilePhoto, org.springframework.web.multipart.MultipartFile governmentIdProof) {
@@ -99,6 +100,7 @@ public class AuthService {
             user.setProfilePhotoUrl(stored);
         }
         user = userRepository.save(user);
+        referralService.initializeUser(user, request.getReferralCode(), request.getDeviceFingerprint());
 
         if (governmentIdProof != null && !governmentIdProof.isEmpty()) {
             KycDocument document = new KycDocument();
@@ -129,6 +131,7 @@ public class AuthService {
         }
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
+        referralService.initializeUser(user, null, request.getDeviceFingerprint());
         return issueTokens(user, request.getRole(), ipAddress, userAgent);
     }
 

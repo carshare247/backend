@@ -68,6 +68,9 @@ app:
     currency: INR
     provider: mock
 
+  rewards:
+    encryption-key: ${REWARDS_ENCRYPTION_KEY:ENmOKITGGKP8ZiGPoqvq6okE2fRlb9XHqWrzj0VA884=}
+
   # Override with comma-separated MM-dd=Holiday Name values for the deployment locale.
   holidays: ${APP_HOLIDAYS:01-26=Republic Day,05-01=May Day,08-15=Independence Day,10-02=Gandhi Jayanti,12-25=Christmas}
 

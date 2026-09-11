@@ -27,5 +27,11 @@ public class AuthRequest {
 
     private String firebaseUid;
 
+    @Size(max = 20)
+    private String referralCode;
+
+    @Size(max = 255)
+    private String deviceFingerprint;
+
     private MultipartFile governmentIdProof;
 }

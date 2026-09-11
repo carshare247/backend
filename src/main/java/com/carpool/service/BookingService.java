@@ -42,6 +42,7 @@ public class BookingService {
     private final MultiStopBookingService multiStopBookingService;
     private final PassengerLocationService passengerLocationService;
     private final UserBlockService userBlockService;
+    private final ReferralService referralService;
 
     @Transactional
     public BookingResponse create(BookingCreateRequest request) {
@@ -54,6 +55,14 @@ public class BookingService {
         }
         Ride ride = rideRepository.findByIdForUpdate(request.getRideId())
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "Ride not found"));
+        if (ride.isFemaleOnly()) {
+            String passengerGender = userRepository.findById(principal.getUserId())
+                .map(user -> user.getGender())
+                .orElse(null);
+            if (!"female".equalsIgnoreCase(passengerGender)) {
+                throw new AppException(HttpStatus.FORBIDDEN, "FEMALE_ONLY_RIDE", "This ride is available only to female passengers");
+            }
+        }
         if (ride.getStatus() != RideStatus.ACTIVE || ride.getDate().isBefore(LocalDate.now())) {
             throw new AppException(HttpStatus.CONFLICT, "CONFLICT", "Ride unavailable");
         }
@@ -246,10 +255,12 @@ public class BookingService {
         for (Booking b : accepted) {
             b.setStatus(BookingStatus.COMPLETED);
             b.setNeedsRating(true);
+            referralService.qualifyAndReward(b.getPassenger().getId(), "PASSENGER_COMPLETED_RIDE", b.getId());
             notificationService.create(b.getPassenger().getId(), NotificationType.RATING_AVAILABLE,
                 "Rate your ride", "You can now rate your completed ride.");
         }
         bookingRepository.saveAll(accepted);
+        referralService.qualifyAndReward(ride.getOwner().getUser().getId(), "OWNER_COMPLETED_RIDE", ride.getId());
     }
 
     @Transactional

@@ -10,6 +10,11 @@ import java.util.UUID;
 public class CheckoutResponse {
     private UUID subscriptionId;
     private int amount;
+    private int grossAmount;
+    private long availableCoins;
+    private long maximumAllowedCoins;
+    private long coinsApplied;
+    private int subscriptionCoinPercentage;
     private String currency;
     private String provider;
     private String checkoutUrl;

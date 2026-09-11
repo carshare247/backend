@@ -39,6 +39,14 @@ public class Subscription extends BaseEntity {
     @Column(nullable = false)
     private int amount;
 
+    private Integer grossAmount;
+
+    @Column(nullable = false)
+    private long coinsApplied;
+
+    @Column(nullable = false)
+    private boolean walletDeductionApplied;
+
     @Column(nullable = false, length = 10)
     private String currency;
 

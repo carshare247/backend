@@ -137,6 +137,9 @@ public class MultiStopBookingService {
         // Get passenger user
         User passenger = userRepository.findById(passengerId)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "NOT_FOUND", "Passenger not found"));
+        if (ride.isFemaleOnly() && !"female".equalsIgnoreCase(passenger.getGender())) {
+            throw new AppException(HttpStatus.FORBIDDEN, "FEMALE_ONLY_RIDE", "This ride is available only to female passengers");
+        }
 
         // Create booking
         Booking booking = new Booking();

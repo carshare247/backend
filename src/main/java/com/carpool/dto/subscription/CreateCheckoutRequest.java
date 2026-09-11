@@ -17,4 +17,6 @@ public class CreateCheckoutRequest {
     @NotNull(message = "planId is required")
     @NotBlank(message = "planId cannot be blank")
     private String planId;
+
+    private boolean useCoins;
 }

@@ -138,7 +138,7 @@ public class RideService {
             // Keep fully booked rides in results; frontend can mark them as FULL using availableSeats.
             .filter(r -> passengers == null || r.getTotalSeats() >= passengers)
             .filter(r -> r.getOwner().isVerified())
-            .filter(r -> !r.isFemaleOnly() || requesterGender == null || "female".equalsIgnoreCase(requesterGender))
+            .filter(r -> !r.isFemaleOnly() || "female".equalsIgnoreCase(requesterGender))
             .filter(r -> {
                 if (!hideOwnerRidesForRequester) return true;
                 try {

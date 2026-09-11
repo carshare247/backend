@@ -39,6 +39,14 @@ public class TicketService {
         List<TicketCategory> categories = new java.util.ArrayList<>(categoryRepository.findAll());
         addDefaultCategory(categories, "DOCUMENT_VERIFICATION", "Document verification", "ALL");
         addDefaultCategory(categories, "SAFETY_INCIDENT", "Safety incident (urgent)", "ALL");
+        addDefaultCategory(categories, "RIDE_ISSUES", "Ride issues", "ALL");
+        addDefaultCategory(categories, "BOOKING_ISSUES", "Booking issues", "ALL");
+        addDefaultCategory(categories, "PAYMENT_ISSUES", "Payment issues", "ALL");
+        addDefaultCategory(categories, "SUBSCRIPTION_ISSUES", "Subscription issues", "OWNER");
+        addDefaultCategory(categories, "REFERRAL_ISSUES", "Referral issues", "ALL");
+        addDefaultCategory(categories, "COIN_REDEMPTION", "Coin redemption", "ALL");
+        addDefaultCategory(categories, "WALLET_ISSUES", "Wallet issues", "ALL");
+        addDefaultCategory(categories, "TECHNICAL_ISSUES", "Technical issues", "ALL");
         return categories;
     }
 
