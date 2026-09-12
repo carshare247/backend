@@ -11,4 +11,6 @@ public interface RedemptionRequestRepository extends JpaRepository<RedemptionReq
     List<RedemptionRequest> findByUserIdOrderByCreatedAtDesc(UUID userId);
     @EntityGraph(attributePaths = "user")
     List<RedemptionRequest> findAllByOrderByCreatedAtDesc();
+    @EntityGraph(attributePaths = "user")
+    Optional<RedemptionRequest> findByIdWithUser(UUID id);
 }

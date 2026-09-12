@@ -62,7 +62,7 @@ public class RedemptionService {
     @Transactional
     public RedemptionRequest transition(UUID id, UpdateRedemptionRequest request) {
         requireAdmin();
-        RedemptionRequest redemption = redemptionRepository.findById(id)
+        RedemptionRequest redemption = redemptionRepository.findByIdWithUser(id)
             .orElseThrow(() -> new AppException(HttpStatus.NOT_FOUND, "REDEMPTION_NOT_FOUND", "Redemption request not found"));
         String from = redemption.getStatus();
         String to = request.getStatus().trim().toUpperCase(Locale.ROOT);
