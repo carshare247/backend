@@ -67,8 +67,15 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource(AppProperties appProperties) {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        // support wildcard/dynamic origins from configuration
-        configuration.setAllowedOriginPatterns(appProperties.getCors().getAllowedOrigins());
+        // Keep deployment overrides, but never lose the local and known web app origins.
+        java.util.LinkedHashSet<String> allowedOrigins = new java.util.LinkedHashSet<>();
+        if (appProperties.getCors().getAllowedOrigins() != null) {
+            allowedOrigins.addAll(appProperties.getCors().getAllowedOrigins());
+        }
+        allowedOrigins.add("http://localhost:*");
+        allowedOrigins.add("http://127.0.0.1:*");
+        allowedOrigins.add("https://carshareuat.netlify.app");
+        configuration.setAllowedOriginPatterns(new java.util.ArrayList<>(allowedOrigins));
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setExposedHeaders(java.util.List.of("Authorization"));
