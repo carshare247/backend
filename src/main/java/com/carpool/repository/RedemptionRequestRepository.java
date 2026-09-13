@@ -3,6 +3,8 @@ package com.carpool.repository;
 import com.carpool.entity.RedemptionRequest;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,5 +15,6 @@ public interface RedemptionRequestRepository extends JpaRepository<RedemptionReq
     @EntityGraph(attributePaths = "user")
     List<RedemptionRequest> findAllByOrderByCreatedAtDesc();
     @EntityGraph(attributePaths = "user")
-    Optional<RedemptionRequest> findByIdWithUser(UUID id);
+    @Query("select r from RedemptionRequest r join fetch r.user where r.id = :id")
+    Optional<RedemptionRequest> findByIdWithUser(@Param("id") UUID id);
 }
