@@ -83,7 +83,9 @@ public class AdminRewardsController {
             .toList();
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("totalReferrals", referrals.size()); result.put("rewardedReferrals", referrals.stream().filter(r -> "REWARDED".equals(r.getStatus())).count());
-        result.put("coinsIssued", transactions.stream().mapToLong(WalletTransaction::getCoinsAdded).sum());
+        result.put("coinsIssued", transactions.stream()
+            .filter(transaction -> Set.of("REFERRAL_REWARD", "BONUS_COINS").contains(transaction.getTransactionType()))
+            .mapToLong(WalletTransaction::getCoinsAdded).sum());
         result.put("coinsRedeemed", redemptions.stream().filter(r -> Set.of("PAID", "CLOSED").contains(r.getStatus())).mapToLong(RedemptionRequest::getAmount).sum());
         result.put("coinsUsedForSubscription", transactions.stream().filter(t -> "SUBSCRIPTION_PAYMENT".equals(t.getTransactionType())).mapToLong(WalletTransaction::getCoinsDeducted).sum());
         result.put("pendingRedemptions", redemptions.stream().filter(r -> Set.of("PENDING", "PROCESSING").contains(r.getStatus())).count());
