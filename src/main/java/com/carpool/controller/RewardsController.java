@@ -75,7 +75,7 @@ public class RewardsController {
     private Map<String, Object> redemptionView(RedemptionRequest r) {
         Map<String, Object> value = new LinkedHashMap<>();
         value.put("id", r.getId()); value.put("bankName", r.getBankName()); value.put("accountNumber", "••••" + r.getAccountNumberLast4());
-        value.put("amount", r.getAmount()); value.put("status", r.getStatus()); value.put("requestDate", r.getCreatedAt()); value.put("rejectionReason", r.getRejectionReason());
+        value.put("amount", r.getAmount()); value.put("status", r.getStatus()); value.put("requestDate", r.getCreatedAt()); value.put("rejectionReason", r.getRejectionReason()); value.put("paymentReference", r.getPaymentReference());
         return value;
     }
 }

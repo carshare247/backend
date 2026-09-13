@@ -88,6 +88,9 @@ public class RedemptionService {
             notificationService.create(redemption.getUser().getId(), NotificationType.REDEMPTION_APPROVED,
                 "Redemption processed", "Your redemption payment has been processed.", "/referrals");
         } else if (to.equals("CLOSED")) {
+            if (redemption.getPaymentReference() == null || redemption.getPaymentReference().isBlank()) {
+                throw new AppException(HttpStatus.CONFLICT, "PAYMENT_REFERENCE_REQUIRED", "Add the payment reference before closing this redemption");
+            }
             redemption.setClosedAt(Instant.now());
         }
         redemptionRepository.save(redemption);
