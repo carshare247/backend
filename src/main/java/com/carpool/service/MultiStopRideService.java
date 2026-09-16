@@ -117,6 +117,7 @@ public class MultiStopRideService {
         ride.setTotalSeats(request.getTotalSeats());
         ride.setAvailableSeats(request.getTotalSeats());
         ride.setFemaleOnly(request.getFemaleOnly() != null && request.getFemaleOnly());
+        ride.setAcceptParcel(request.getAcceptParcel() != null && request.getAcceptParcel());
         ride.setStatus(RideStatus.ACTIVE);
         ride.setMultiStop(false);
         ride.setPricingType(PricingType.FIXED);
@@ -182,6 +183,7 @@ public class MultiStopRideService {
         ride.setTotalSeats(request.getTotalSeats());
         ride.setAvailableSeats(request.getTotalSeats());
         ride.setFemaleOnly(request.getFemaleOnly() != null && request.getFemaleOnly());
+        ride.setAcceptParcel(request.getAcceptParcel() != null && request.getAcceptParcel());
         ride.setStatus(RideStatus.ACTIVE);
         ride.setMultiStop(true);
         ride.setTotalStops(request.getStops().size());
@@ -483,6 +485,9 @@ public class MultiStopRideService {
                 if (ride.isFemaleOnly() && !"female".equalsIgnoreCase(requesterGender)) {
                     continue;
                 }
+                if (request.isParcelSearch() && !ride.isAcceptParcel()) {
+                    continue;
+                }
                 List<RideStop> rideStops = rideStopRepository.findByRideIdOrderByStopOrder(ride.getId());
                 RideStop fromStop = findMatchingStop(rideStops, request.getFromLocation(), request.getFromLatitude(), request.getFromLongitude());
                 RideStop toStop = findMatchingStop(rideStops, request.getToLocation(), request.getToLatitude(), request.getToLongitude());
@@ -612,6 +617,7 @@ public class MultiStopRideService {
             .routePreview(routePreview)
             .routeStops(buildRouteStopDetails(ride.getStops(), fromStop.getId(), toStop.getId()))
             .femaleOnly(ride.isFemaleOnly())
+            .acceptParcel(ride.isAcceptParcel())
             .distanceKm(segment.getDistanceKm())
             .build();
     }

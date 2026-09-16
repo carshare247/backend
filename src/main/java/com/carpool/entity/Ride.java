@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -82,6 +83,17 @@ public class Ride extends BaseEntity {
     @Column(nullable = false)
     private boolean femaleOnly = false;
 
+    @Column(nullable = false)
+    private boolean acceptParcel = false;
+
+    public boolean isAcceptParcel() {
+        return acceptParcel;
+    }
+
+    public void setAcceptParcel(boolean acceptParcel) {
+        this.acceptParcel = acceptParcel;
+    }
+
     // ========== Multi-Stop Route Support ==========
 
     /**
@@ -125,6 +137,7 @@ public class Ride extends BaseEntity {
      * List of all stops in this ride (in order).
      * Populated only for multi-stop rides.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "ride", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RideStop> stops = new ArrayList<>();
 
@@ -133,12 +146,14 @@ public class Ride extends BaseEntity {
      * Each segment represents a journey from one stop to another.
      * Populated for multi-stop rides.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "ride", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RideSegment> segments = new ArrayList<>();
 
     /**
      * List of segment bookings for seat availability tracking.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "ride", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RideSegmentBooking> segmentBookings = new ArrayList<>();
 }

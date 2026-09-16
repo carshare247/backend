@@ -109,6 +109,7 @@ public class NotificationService {
         return switch (type) {
             case NEW_BOOKING_REQUEST, RATING_RECEIVED, RIDE_CREATED,
                 SUBSCRIPTION_PENDING, SUBSCRIPTION_PAYMENT_SUCCESS, SUBSCRIPTION_PAYMENT_FAILURE,
+                PARCEL_REQUESTED,
                 KYC_VERIFICATION_RESULT -> Role.OWNER;
             case TICKET_RAISED, TICKET_RESOLVED -> Role.ADMIN;
             default -> Role.PASSENGER;

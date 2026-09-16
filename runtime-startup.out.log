@@ -1,0 +1,395 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.4)
+
+{"timestamp":"2026-09-16T16:47:18.454+05:30","level":"INFO","thread":"main","logger":"com.carpool.CarpoolBackendApplication","message":"Starting CarpoolBackendApplication v0.0.1-SNAPSHOT using Java 17.0.12 with PID 14532 (D:\Project\GIT SOURCE\latest\28082026\backend\target\backend-0.0.1-SNAPSHOT.jar started by AKumaresh in D:\Project\GIT SOURCE\latest\28082026\backend)"}
+{"timestamp":"2026-09-16T16:47:18.479+05:30","level":"INFO","thread":"main","logger":"com.carpool.CarpoolBackendApplication","message":"No active profile set, falling back to 1 default profile: "default""}
+{"timestamp":"2026-09-16T16:48:27.660+05:30","level":"INFO","thread":"main","logger":"org.springframework.data.repository.config.RepositoryConfigurationDelegate","message":"Bootstrapping Spring Data JPA repositories in DEFAULT mode."}
+{"timestamp":"2026-09-16T16:48:33.079+05:30","level":"INFO","thread":"main","logger":"org.springframework.data.repository.config.RepositoryConfigurationDelegate","message":"Finished Spring Data repository scanning in 5167 ms. Found 43 JPA repository interfaces."}
+{"timestamp":"2026-09-16T16:48:54.344+05:30","level":"INFO","thread":"main","logger":"org.springframework.boot.web.embedded.tomcat.TomcatWebServer","message":"Tomcat initialized with port 8080 (http)"}
+{"timestamp":"2026-09-16T16:48:54.505+05:30","level":"INFO","thread":"main","logger":"org.apache.catalina.core.StandardService","message":"Starting service [Tomcat]"}
+{"timestamp":"2026-09-16T16:48:54.507+05:30","level":"INFO","thread":"main","logger":"org.apache.catalina.core.StandardEngine","message":"Starting Servlet engine: [Apache Tomcat/10.1.30]"}
+{"timestamp":"2026-09-16T16:48:54.967+05:30","level":"INFO","thread":"main","logger":"org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]","message":"Initializing Spring embedded WebApplicationContext"}
+{"timestamp":"2026-09-16T16:48:54.969+05:30","level":"INFO","thread":"main","logger":"org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext","message":"Root WebApplicationContext: initialization completed in 94430 ms"}
+{"timestamp":"2026-09-16T16:48:59.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"Driver class com.mysql.cj.jdbc.Driver found in Thread context class loader TomcatEmbeddedWebappClassLoader
+  context: ROOT
+  delegate: true
+----------> Parent Classloader:
+org.springframework.boot.loader.launch.LaunchedClassLoader@1f17ae12
+"}
+{"timestamp":"2026-09-16T16:49:00.714+05:30","level":"DEBUG","thread":"main","logger":"org.springframework.jdbc.datasource.DataSourceUtils","message":"Fetching JDBC Connection from DataSource"}
+{"timestamp":"2026-09-16T16:49:00.728+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"HikariPool-1 - configuration:"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"allowPoolSuspension.............false"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"autoCommit......................true"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"catalog.........................none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"connectionInitSql...............none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"connectionTestQuery.............none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"connectionTimeout...............30000"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"dataSource......................none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"dataSourceClassName.............none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"dataSourceJNDI..................none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"dataSourceProperties............{password=<masked>}"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"driverClassName................."com.mysql.cj.jdbc.Driver""}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"exceptionOverrideClassName......none"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"healthCheckProperties...........{}"}
+{"timestamp":"2026-09-16T16:49:00.745+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"healthCheckRegistry.............none"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"idleTimeout.....................600000"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"initializationFailTimeout.......1"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"isolateInternalQueries..........false"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"jdbcUrl.........................jdbc:mysql://localhost:3306/carshare"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"keepaliveTime...................0"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"leakDetectionThreshold..........0"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"maxLifetime.....................1800000"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"maximumPoolSize.................10"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"metricRegistry..................none"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"metricsTrackerFactory...........none"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"minimumIdle.....................10"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"password........................<masked>"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"poolName........................"HikariPool-1""}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"readOnly........................false"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"registerMbeans..................false"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"scheduledExecutor...............none"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"schema..........................none"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"threadFactory...................internal"}
+{"timestamp":"2026-09-16T16:49:00.762+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"transactionIsolation............default"}
+{"timestamp":"2026-09-16T16:49:00.777+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"username........................"root""}
+{"timestamp":"2026-09-16T16:49:00.778+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.HikariConfig","message":"validationTimeout...............5000"}
+{"timestamp":"2026-09-16T16:49:00.778+05:30","level":"INFO","thread":"main","logger":"com.zaxxer.hikari.HikariDataSource","message":"HikariPool-1 - Starting..."}
+{"timestamp":"2026-09-16T16:49:09.544+05:30","level":"INFO","thread":"main","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1be52113"}
+{"timestamp":"2026-09-16T16:49:09.597+05:30","level":"INFO","thread":"main","logger":"com.zaxxer.hikari.HikariDataSource","message":"HikariPool-1 - Start completed."}
+{"timestamp":"2026-09-16T16:49:09.711+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=1, active=1, idle=0, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:09.795+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@48c96e01"}
+{"timestamp":"2026-09-16T16:49:09.831+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=2, active=1, idle=1, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:09.900+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@28e6914e"}
+{"timestamp":"2026-09-16T16:49:09.943+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=3, active=0, idle=3, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:09.998+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7997049e"}
+{"timestamp":"2026-09-16T16:49:10.045+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=4, active=0, idle=4, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.085+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2ca84d01"}
+{"timestamp":"2026-09-16T16:49:10.127+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=5, active=0, idle=5, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.170+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5291a04c"}
+{"timestamp":"2026-09-16T16:49:10.213+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=6, active=0, idle=6, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.268+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4aa43880"}
+{"timestamp":"2026-09-16T16:49:10.314+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=7, active=0, idle=7, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.361+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@192d166b"}
+{"timestamp":"2026-09-16T16:49:10.395+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=8, active=0, idle=8, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.450+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3179121"}
+{"timestamp":"2026-09-16T16:49:10.493+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=9, active=0, idle=9, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.539+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3e3c5532"}
+{"timestamp":"2026-09-16T16:49:10.579+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After adding stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:10.583+05:30","level":"DEBUG","thread":"HikariPool-1 connection adder","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Connection not added, stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:12.359+05:30","level":"INFO","thread":"main","logger":"org.hibernate.jpa.internal.util.LogHelper","message":"HHH000204: Processing PersistenceUnitInfo [name: default]"}
+{"timestamp":"2026-09-16T16:49:17.367+05:30","level":"INFO","thread":"main","logger":"org.hibernate.Version","message":"HHH000412: Hibernate ORM core version 6.5.3.Final"}
+{"timestamp":"2026-09-16T16:49:19.902+05:30","level":"INFO","thread":"main","logger":"org.hibernate.cache.internal.RegionFactoryInitiator","message":"HHH000026: Second-level cache disabled"}
+{"timestamp":"2026-09-16T16:49:39.720+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:49:39.727+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled."}
+{"timestamp":"2026-09-16T16:49:47.883+05:30","level":"INFO","thread":"main","logger":"org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo","message":"No LoadTimeWeaver setup: ignoring JPA class transformer"}
+{"timestamp":"2026-09-16T16:49:52.481+05:30","level":"WARN","thread":"main","logger":"org.hibernate.orm.incubating","message":"HHH90006001: Encountered incubating setting [hibernate.type.preferred_uuid_jdbc_type].  See javadoc on corresponding `org.hibernate.cfg.AvailableSettings` constant for details."}
+{"timestamp":"2026-09-16T16:50:08.708+05:30","level":"WARN","thread":"main","logger":"org.hibernate.orm.incubating","message":"HHH90006001: Encountered incubating setting [hibernate.type.preferred_uuid_jdbc_type].  See javadoc on corresponding `org.hibernate.cfg.AvailableSettings` constant for details."}
+{"timestamp":"2026-09-16T16:50:09.742+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:50:09.742+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled."}
+{"timestamp":"2026-09-16T16:50:39.748+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:50:39.752+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled."}
+{"timestamp":"2026-09-16T16:50:55.313+05:30","level":"INFO","thread":"main","logger":"org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator","message":"HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)"}
+{"timestamp":"2026-09-16T16:50:56.812+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table bookings 
+       modify column cancelled_by enum ('ADMIN','OWNER','PASSENGER','SYSTEM')"}
+Hibernate: 
+    alter table bookings 
+       modify column cancelled_by enum ('ADMIN','OWNER','PASSENGER','SYSTEM')
+{"timestamp":"2026-09-16T16:50:56.850+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table bookings 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','EXPIRED','PENDING','REJECTED') not null"}
+Hibernate: 
+    alter table bookings 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','EXPIRED','PENDING','REJECTED') not null
+{"timestamp":"2026-09-16T16:50:56.883+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_review_audit_logs 
+       modify column action enum ('APPROVED','COMMENTED','DECLINED','DOCUMENT_DOWNLOADED','RESUBMITTED','STATUS_CHECKED','VIEWED') not null"}
+Hibernate: 
+    alter table didit_review_audit_logs 
+       modify column action enum ('APPROVED','COMMENTED','DECLINED','DOCUMENT_DOWNLOADED','RESUBMITTED','STATUS_CHECKED','VIEWED') not null
+{"timestamp":"2026-09-16T16:50:56.900+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_review_audit_logs 
+       modify column action_detail LONGTEXT"}
+Hibernate: 
+    alter table didit_review_audit_logs 
+       modify column action_detail LONGTEXT
+{"timestamp":"2026-09-16T16:50:56.926+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_sessions 
+       modify column user_role enum ('ADMIN','OWNER','PASSENGER') not null"}
+Hibernate: 
+    alter table didit_sessions 
+       modify column user_role enum ('ADMIN','OWNER','PASSENGER') not null
+{"timestamp":"2026-09-16T16:50:56.943+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_audit 
+       modify column status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED') not null"}
+Hibernate: 
+    alter table didit_verification_audit 
+       modify column status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED') not null
+{"timestamp":"2026-09-16T16:50:56.967+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_audit 
+       modify column user_role enum ('ADMIN','OWNER','PASSENGER') not null"}
+Hibernate: 
+    alter table didit_verification_audit 
+       modify column user_role enum ('ADMIN','OWNER','PASSENGER') not null
+{"timestamp":"2026-09-16T16:50:57.007+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_documents 
+       modify column document_side enum ('BACK','FRONT','SELFIE') not null"}
+Hibernate: 
+    alter table didit_verification_documents 
+       modify column document_side enum ('BACK','FRONT','SELFIE') not null
+{"timestamp":"2026-09-16T16:50:57.043+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_documents 
+       modify column processed_data LONGTEXT"}
+Hibernate: 
+    alter table didit_verification_documents 
+       modify column processed_data LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.076+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_events 
+       modify column event_data LONGTEXT"}
+Hibernate: 
+    alter table didit_verification_events 
+       modify column event_data LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.098+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verification_events 
+       modify column event_type enum ('ADMIN_APPROVED','ADMIN_DECLINED','ADMIN_VIEWED','APPROVED','DECLINED','ERROR','EXPIRED','RESUBMISSION_REQUESTED','RESUBMITTED','SUBMITTED','UNDER_REVIEW','VERIFICATION_CREATED','WEBHOOK_RECEIVED') not null"}
+Hibernate: 
+    alter table didit_verification_events 
+       modify column event_type enum ('ADMIN_APPROVED','ADMIN_DECLINED','ADMIN_VIEWED','APPROVED','DECLINED','ERROR','EXPIRED','RESUBMISSION_REQUESTED','RESUBMITTED','SUBMITTED','UNDER_REVIEW','VERIFICATION_CREATED','WEBHOOK_RECEIVED') not null
+{"timestamp":"2026-09-16T16:50:57.117+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column approval_comment LONGTEXT"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column approval_comment LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.150+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column approval_status enum ('APPROVED','DECLINED','PENDING')"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column approval_status enum ('APPROVED','DECLINED','PENDING')
+{"timestamp":"2026-09-16T16:50:57.183+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column current_status enum ('APPROVED','DECLINED','PENDING','RESUBMISSION_REQUESTED','UNDER_REVIEW') not null"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column current_status enum ('APPROVED','DECLINED','PENDING','RESUBMISSION_REQUESTED','UNDER_REVIEW') not null
+{"timestamp":"2026-09-16T16:50:57.200+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column ocr_data LONGTEXT"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column ocr_data LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.237+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column resubmission_reason LONGTEXT"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column resubmission_reason LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.277+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column risk_flags LONGTEXT"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column risk_flags LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.361+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_verifications 
+       modify column verification_warnings LONGTEXT"}
+Hibernate: 
+    alter table didit_verifications 
+       modify column verification_warnings LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.414+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_webhook_events 
+       modify column event_payload LONGTEXT not null"}
+Hibernate: 
+    alter table didit_webhook_events 
+       modify column event_payload LONGTEXT not null
+{"timestamp":"2026-09-16T16:50:57.437+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_webhook_events 
+       modify column event_type enum ('APPROVED','DECLINED','EXPIRED','IN_REVIEW','RESUBMITTED') not null"}
+Hibernate: 
+    alter table didit_webhook_events 
+       modify column event_type enum ('APPROVED','DECLINED','EXPIRED','IN_REVIEW','RESUBMITTED') not null
+{"timestamp":"2026-09-16T16:50:57.467+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_webhook_events 
+       modify column last_error LONGTEXT"}
+Hibernate: 
+    alter table didit_webhook_events 
+       modify column last_error LONGTEXT
+{"timestamp":"2026-09-16T16:50:57.488+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table didit_webhook_events 
+       modify column processing_status enum ('COMPLETED','FAILED','PENDING','PROCESSING') not null"}
+Hibernate: 
+    alter table didit_webhook_events 
+       modify column processing_status enum ('COMPLETED','FAILED','PENDING','PROCESSING') not null
+{"timestamp":"2026-09-16T16:50:57.522+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table kyc_documents 
+       modify column type enum ('GOVERNMENT_ID','PROFILE_PHOTO') not null"}
+Hibernate: 
+    alter table kyc_documents 
+       modify column type enum ('GOVERNMENT_ID','PROFILE_PHOTO') not null
+{"timestamp":"2026-09-16T16:50:57.545+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table locations 
+       modify column bounding_box text"}
+Hibernate: 
+    alter table locations 
+       modify column bounding_box text
+{"timestamp":"2026-09-16T16:50:57.571+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table notifications 
+       modify column recipient_role enum ('ADMIN','OWNER','PASSENGER')"}
+Hibernate: 
+    alter table notifications 
+       modify column recipient_role enum ('ADMIN','OWNER','PASSENGER')
+{"timestamp":"2026-09-16T16:50:57.603+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table notifications 
+       modify column type enum ('BIRTHDAY_GREETING','BOOKING_ACCEPTED','BOOKING_PENDING','BOOKING_REJECTED','COIN_REWARD_CREDITED','GOVERNMENT_HOLIDAY_GREETING','KYC_VERIFICATION_RESULT','NEW_BOOKING_REQUEST','OWNER_RIDE_CANCELLATION','PARCEL_OTP_GENERATED','PARCEL_REQUESTED','PASSENGER_CANCELLATION','RATING_AVAILABLE','RATING_RECEIVED','REDEMPTION_APPROVED','REDEMPTION_REJECTED','REDEMPTION_SUBMITTED','REFERRAL_QUALIFIED','REFERRAL_REGISTERED','RIDE_COMPLETION','RIDE_CREATED','RIDE_POSTED','SUBSCRIPTION_COINS_USED','SUBSCRIPTION_PAYMENT_FAILURE','SUBSCRIPTION_PAYMENT_SUCCESS','SUBSCRIPTION_PENDING','TICKET_RAISED','TICKET_RESOLVED') not null"}
+Hibernate: 
+    alter table notifications 
+       modify column type enum ('BIRTHDAY_GREETING','BOOKING_ACCEPTED','BOOKING_PENDING','BOOKING_REJECTED','COIN_REWARD_CREDITED','GOVERNMENT_HOLIDAY_GREETING','KYC_VERIFICATION_RESULT','NEW_BOOKING_REQUEST','OWNER_RIDE_CANCELLATION','PARCEL_OTP_GENERATED','PARCEL_REQUESTED','PASSENGER_CANCELLATION','RATING_AVAILABLE','RATING_RECEIVED','REDEMPTION_APPROVED','REDEMPTION_REJECTED','REDEMPTION_SUBMITTED','REFERRAL_QUALIFIED','REFERRAL_REGISTERED','RIDE_COMPLETION','RIDE_CREATED','RIDE_POSTED','SUBSCRIPTION_COINS_USED','SUBSCRIPTION_PAYMENT_FAILURE','SUBSCRIPTION_PAYMENT_SUCCESS','SUBSCRIPTION_PENDING','TICKET_RAISED','TICKET_RESOLVED') not null
+{"timestamp":"2026-09-16T16:50:57.632+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table parcel_tracking 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','DELIVERED','DELIVERY_OTP_GENERATED','IN_TRANSIT','NEAR_DESTINATION','PICKED_UP','PICKUP_OTP_GENERATED','REJECTED','REQUESTED','RIDE_MATCHED') not null"}
+Hibernate: 
+    alter table parcel_tracking 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','DELIVERED','DELIVERY_OTP_GENERATED','IN_TRANSIT','NEAR_DESTINATION','PICKED_UP','PICKUP_OTP_GENERATED','REJECTED','REQUESTED','RIDE_MATCHED') not null
+{"timestamp":"2026-09-16T16:50:57.650+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table parcels 
+       modify column category enum ('CLOTHING','DOCUMENT','ELECTRONICS','FOOD','FRAGILE','HOUSEHOLD','MEDICAL','OTHER') not null"}
+Hibernate: 
+    alter table parcels 
+       modify column category enum ('CLOTHING','DOCUMENT','ELECTRONICS','FOOD','FRAGILE','HOUSEHOLD','MEDICAL','OTHER') not null
+{"timestamp":"2026-09-16T16:50:57.702+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table parcels 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','DELIVERED','DELIVERY_OTP_GENERATED','IN_TRANSIT','NEAR_DESTINATION','PICKED_UP','PICKUP_OTP_GENERATED','REJECTED','REQUESTED','RIDE_MATCHED') not null"}
+Hibernate: 
+    alter table parcels 
+       modify column status enum ('ACCEPTED','CANCELLED','COMPLETED','DELIVERED','DELIVERY_OTP_GENERATED','IN_TRANSIT','NEAR_DESTINATION','PICKED_UP','PICKUP_OTP_GENERATED','REJECTED','REQUESTED','RIDE_MATCHED') not null
+{"timestamp":"2026-09-16T16:50:57.755+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table referrals 
+       modify column referred_role enum ('ADMIN','OWNER','PASSENGER') not null"}
+Hibernate: 
+    alter table referrals 
+       modify column referred_role enum ('ADMIN','OWNER','PASSENGER') not null
+{"timestamp":"2026-09-16T16:50:57.771+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table rides 
+       modify column pricing_type enum ('FIXED','SEGMENTED') not null"}
+Hibernate: 
+    alter table rides 
+       modify column pricing_type enum ('FIXED','SEGMENTED') not null
+{"timestamp":"2026-09-16T16:50:57.832+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table rides 
+       modify column status enum ('ACTIVE','CANCELLED','COMPLETED') not null"}
+Hibernate: 
+    alter table rides 
+       modify column status enum ('ACTIVE','CANCELLED','COMPLETED') not null
+{"timestamp":"2026-09-16T16:50:57.869+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table subscriptions 
+       modify column provider enum ('MOCK','RAZORPAY') not null"}
+Hibernate: 
+    alter table subscriptions 
+       modify column provider enum ('MOCK','RAZORPAY') not null
+{"timestamp":"2026-09-16T16:50:57.900+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table subscriptions 
+       modify column status enum ('CREATED','EXPIRED','FAILED','INACTIVE','PAID','PENDING','REFUNDED','REJECTED','VERIFICATION_IN_PROGRESS') not null"}
+Hibernate: 
+    alter table subscriptions 
+       modify column status enum ('CREATED','EXPIRED','FAILED','INACTIVE','PAID','PENDING','REFUNDED','REJECTED','VERIFICATION_IN_PROGRESS') not null
+{"timestamp":"2026-09-16T16:50:57.920+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column didit_status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED')"}
+Hibernate: 
+    alter table users 
+       modify column didit_status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED')
+{"timestamp":"2026-09-16T16:50:58.060+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column registration_stage enum ('BASIC_DETAILS_COMPLETED','DOCUMENT_VERIFIED','OTP_VERIFIED','PAYMENT_SUBMITTED','PROFILE_PHOTO_COMPLETED','REGISTRATION_COMPLETED','SUBSCRIPTION_SELECTED','USER_TYPE_SELECTED')"}
+Hibernate: 
+    alter table users 
+       modify column registration_stage enum ('BASIC_DETAILS_COMPLETED','DOCUMENT_VERIFIED','OTP_VERIFIED','PAYMENT_SUBMITTED','PROFILE_PHOTO_COMPLETED','REGISTRATION_COMPLETED','SUBSCRIPTION_SELECTED','USER_TYPE_SELECTED')
+{"timestamp":"2026-09-16T16:50:58.266+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column registration_type enum ('OWNER','PASSENGER')"}
+Hibernate: 
+    alter table users 
+       modify column registration_type enum ('OWNER','PASSENGER')
+{"timestamp":"2026-09-16T16:50:58.398+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column role enum ('ADMIN','OWNER','PASSENGER') not null"}
+Hibernate: 
+    alter table users 
+       modify column role enum ('ADMIN','OWNER','PASSENGER') not null
+{"timestamp":"2026-09-16T16:50:58.506+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column subscription_status enum ('CREATED','EXPIRED','FAILED','INACTIVE','PAID','PENDING','REFUNDED','REJECTED','VERIFICATION_IN_PROGRESS')"}
+Hibernate: 
+    alter table users 
+       modify column subscription_status enum ('CREATED','EXPIRED','FAILED','INACTIVE','PAID','PENDING','REFUNDED','REJECTED','VERIFICATION_IN_PROGRESS')
+{"timestamp":"2026-09-16T16:50:58.620+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    alter table users 
+       modify column verification_status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED') not null"}
+Hibernate: 
+    alter table users 
+       modify column verification_status enum ('APPROVED','INITIATED','IN_REVIEW','NOT_STARTED','PENDING','PENDING_VERIFICATION','REJECTED','UNDER_REVIEW','UNVERIFIED','VERIFIED') not null
+{"timestamp":"2026-09-16T16:50:59.686+05:30","level":"INFO","thread":"main","logger":"org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean","message":"Initialized JPA EntityManagerFactory for persistence unit 'default'"}
+{"timestamp":"2026-09-16T16:51:09.765+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:51:09.769+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled."}
+{"timestamp":"2026-09-16T16:51:10.301+05:30","level":"DEBUG","thread":"main","logger":"org.springframework.jdbc.datasource.DataSourceUtils","message":"Setting JDBC Connection [HikariProxyConnection@887825634 wrapping com.mysql.cj.jdbc.ConnectionImpl@1be52113] read-only"}
+{"timestamp":"2026-09-16T16:51:17.618+05:30","level":"DEBUG","thread":"main","logger":"org.hibernate.SQL","message":"
+    select
+        count(*) 
+    from
+        locations l1_0"}
+Hibernate: 
+    select
+        count(*) 
+    from
+        locations l1_0
+{"timestamp":"2026-09-16T16:51:18.071+05:30","level":"DEBUG","thread":"main","logger":"org.springframework.jdbc.datasource.DataSourceUtils","message":"Resetting read-only flag of JDBC Connection [HikariProxyConnection@887825634 wrapping com.mysql.cj.jdbc.ConnectionImpl@1be52113]"}
+{"timestamp":"2026-09-16T16:51:19.305+05:30","level":"INFO","thread":"main","logger":"org.springframework.data.jpa.repository.query.QueryEnhancerFactory","message":"Hibernate is in classpath; If applicable, HQL parser will be used."}
+{"timestamp":"2026-09-16T16:51:24.761+05:30","level":"INFO","thread":"main","logger":"com.carpool.service.DiditIntegrationService","message":"Didit integration v2 loaded: baseUrl=https://verification.didit.me, workflowConfigured=true, apiKeyConfigured=true"}
+{"timestamp":"2026-09-16T16:51:32.199+05:30","level":"INFO","thread":"main","logger":"com.carpool.config.FirebaseConfiguration","message":"Loading Firebase credentials from D:\Project\GIT SOURCE\latest\28082026\backend\firebase-service-account.json"}
+{"timestamp":"2026-09-16T16:51:35.763+05:30","level":"INFO","thread":"main","logger":"com.carpool.config.FirebaseConfiguration","message":"Firebase Admin initialized successfully for project: null"}
+{"timestamp":"2026-09-16T16:51:39.406+05:30","level":"INFO","thread":"main","logger":"org.springframework.security.config.annotation.authentication.configuration.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer","message":"Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider"}
+{"timestamp":"2026-09-16T16:51:39.410+05:30","level":"WARN","thread":"main","logger":"org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer","message":"Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider."}
+{"timestamp":"2026-09-16T16:51:39.778+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:51:39.782+05:30","level":"DEBUG","thread":"HikariPool-1 housekeeper","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled."}
+{"timestamp":"2026-09-16T16:51:43.455+05:30","level":"INFO","thread":"main","logger":"org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver","message":"Exposing 1 endpoint beneath base path '/actuator'"}
+{"timestamp":"2026-09-16T16:51:50.296+05:30","level":"WARN","thread":"main","logger":"org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext","message":"Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'"}
+{"timestamp":"2026-09-16T16:51:50.312+05:30","level":"INFO","thread":"main","logger":"org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean","message":"Closing JPA EntityManagerFactory for persistence unit 'default'"}
+{"timestamp":"2026-09-16T16:51:50.317+05:30","level":"INFO","thread":"main","logger":"com.zaxxer.hikari.HikariDataSource","message":"HikariPool-1 - Shutdown initiated..."}
+{"timestamp":"2026-09-16T16:51:50.317+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - Before shutdown stats (total=10, active=0, idle=10, waiting=0)"}
+{"timestamp":"2026-09-16T16:51:50.319+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@1be52113: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.323+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@48c96e01: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.325+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@28e6914e: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.327+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@7997049e: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@2ca84d01: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@5291a04c: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@4aa43880: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@192d166b: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@3179121: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"HikariPool-1 connection closer","logger":"com.zaxxer.hikari.pool.PoolBase","message":"HikariPool-1 - Closing connection com.mysql.cj.jdbc.ConnectionImpl@3e3c5532: (connection evicted)"}
+{"timestamp":"2026-09-16T16:51:50.329+05:30","level":"DEBUG","thread":"main","logger":"com.zaxxer.hikari.pool.HikariPool","message":"HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)"}
+{"timestamp":"2026-09-16T16:51:50.357+05:30","level":"INFO","thread":"main","logger":"com.zaxxer.hikari.HikariDataSource","message":"HikariPool-1 - Shutdown completed."}
+{"timestamp":"2026-09-16T16:51:50.420+05:30","level":"INFO","thread":"main","logger":"org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger","message":"
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled."}
+{"timestamp":"2026-09-16T16:51:50.611+05:30","level":"ERROR","thread":"main","logger":"org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter","message":"
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+"}

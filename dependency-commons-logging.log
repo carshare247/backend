@@ -1,0 +1,19 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.carpool:backend >-------------------------
+[INFO] Building carpool-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.6.1:tree (default-cli) @ backend ---
+[INFO] com.carpool:backend:jar:0.0.1-SNAPSHOT
+[INFO] \- com.google.firebase:firebase-admin:jar:9.3.0:compile
+[INFO]    \- com.google.api-client:google-api-client:jar:2.4.0:compile
+[INFO]       \- org.apache.httpcomponents:httpclient:jar:4.5.14:compile
+[INFO]          \- commons-logging:commons-logging:jar:1.2:compile
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.525 s
+[INFO] Finished at: 2026-09-16T15:32:02+05:30
+[INFO] ------------------------------------------------------------------------
