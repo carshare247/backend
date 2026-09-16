@@ -144,7 +144,7 @@ public class MultiStopRideService {
         if (!owner.isVerified() || !subscriptionRepository.findByOwnerIdOrderByCreatedAtDesc(owner.getId()).stream().anyMatch(s -> s.getStatus() == SubscriptionStatus.PAID)) {
             throw new AppException(HttpStatus.FORBIDDEN, "FORBIDDEN", "Admin-approved subscription and owner verification are required to create rides");
         }
-        if (rideRepository.existsByOwnerIdAndStatusNotIn(owner.getId(), List.of(RideStatus.COMPLETED, RideStatus.CANCELLED))) {
+        if (rideRepository.existsByOwnerIdAndStatus(owner.getId(), RideStatus.ACTIVE)) {
             throw new AppException(HttpStatus.CONFLICT, "ACTIVE_RIDE_EXISTS", "Complete or cancel your active ride before posting another ride");
         }
 

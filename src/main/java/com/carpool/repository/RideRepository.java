@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public interface RideRepository extends JpaRepository<Ride, UUID> {
     Page<Ride> findByStatusAndDateGreaterThanEqual(RideStatus status, LocalDate date, Pageable pageable);
+    boolean existsByOwnerIdAndStatus(UUID ownerId, RideStatus status);
     @EntityGraph(attributePaths = "owner")
     List<Ride> findByOwnerId(UUID ownerId);
 
