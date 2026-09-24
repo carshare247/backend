@@ -117,6 +117,8 @@ public class RideSearchResultDTO {
      */
     private boolean femaleOnly;
 
+    private boolean acceptParcel;
+
     /**
      * Distance of the selected segment in KM.
      */

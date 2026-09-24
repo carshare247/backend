@@ -64,6 +64,8 @@ public class RideSearchRequest {
     @Min(value = 1, message = "At least 1 seat is required")
     private int seats;
 
+    private boolean parcelSearch = false;
+
     /** Include rides that are currently full so the client can show their status. */
     @Builder.Default
     private boolean includeFull = false;

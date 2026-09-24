@@ -29,4 +29,5 @@ public class RideCreateRequest {
     @Min(1)
     private int totalSeats;
     private Boolean femaleOnly;
+    private Boolean acceptParcel;
 }

@@ -69,6 +69,8 @@ public class CreateMultiStopRideRequest {
      */
     private Boolean femaleOnly = false;
 
+    private Boolean acceptParcel = false;
+
     /**
      * DTO for defining price for a segment.
      */
